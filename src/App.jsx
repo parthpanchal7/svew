@@ -1,50 +1,59 @@
-import { useEffect, useState } from "react"
-import { Routes, Route, Navigate } from "react-router-dom"
-import { supabase } from "./lib/supabase"
+import { useEffect, useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { supabase } from "./lib/supabase";
 
-import Login from "./pages/Login"
-import Dashboard from "./pages/Dashboard"
-import Invoices from "./pages/Invoices"
-import Parties from "./pages/Parties"
-import Firms from "./pages/Firms"
-import CreateInvoice from "./pages/CreateInvoice"
-import Navbar from "./components/Navbar"
-import EditInvoice from "./pages/EditInvoice"
-import ViewInvoice from "./pages/ViewInvoice"
-
+import Navbar from "./components/Navbar";
+import CreateInvoice from "./pages/CreateInvoice";
+import Dashboard from "./pages/Dashboard";
+import EditInvoice from "./pages/EditInvoice";
+import Firms from "./pages/Firms";
+import Invoices from "./pages/Invoices";
+import Login from "./pages/Login";
+import Parties from "./pages/Parties";
+import ViewInvoice from "./pages/ViewInvoice";
 
 function App() {
-  const [session, setSession] = useState(null)
-  const [role, setRole] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [session, setSession] = useState(null);
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
+      const {
+        data: { session: activeSession },
+      } = await supabase.auth.getSession();
+      setSession(activeSession);
 
-      if (session) {
+      if (activeSession) {
         const { data } = await supabase
           .from("profiles")
           .select("role")
-          .eq("id", session.user.id)
-          .single()
+          .eq("id", activeSession.user.id)
+          .single();
 
-        setRole(data?.role)
+        setRole(data?.role);
       }
 
-      setLoading(false)
-    }
+      setLoading(false);
+    };
 
-    init()
-  }, [])
+    init();
+  }, []);
 
-  if (loading) return <div>Loading...</div>
+  if (loading) {
+    return (
+      <div className="auth-shell">
+        <div className="page-card auth-card">Loading...</div>
+      </div>
+    );
+  }
 
-  if (!session) return <Login />
+  if (!session) {
+    return <Login />;
+  }
 
   return (
-    <>
+    <div className="app-shell">
       <Navbar role={role} />
       <Routes>
         <Route path="/dashboard" element={<Dashboard role={role} />} />
@@ -56,8 +65,8 @@ function App() {
         <Route path="/view-invoice/:id" element={<ViewInvoice />} />
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;

@@ -1,137 +1,53 @@
-import { useEffect, useState } from "react"
-import { supabase } from "../lib/supabase"
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 export default function Parties({ role }) {
+  const [parties, setParties] = useState([]);
+  const [partyName, setPartyName] = useState("");
+  const [address, setAddress] = useState("");
+  const [gstNumber, setGstNumber] = useState("");
+  const [contactPerson, setContactPerson] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [state, setState] = useState("");
 
-  const [parties, setParties] = useState([])
-  const [partyName, setPartyName] = useState("")
-  const [address, setAddress] = useState("")
-  const [gstNumber, setGstNumber] = useState("")
-  const [contactPerson, setContactPerson] = useState("")
-  const [contactNumber, setContactNumber] = useState("")
-  const [state, setState] = useState("")
-
-useEffect(() => {
-  if (role) {
-    fetchParties()
-  }
-}, [role])
-
-  const fetchParties = async () => {
-    const { data, error } = await supabase.from("parties").select("*")
-    console.log("Fetch parties:", data, error)
-
-    if (error) {
-      alert(error.message)
-      return
-    }
-
-    setParties(data || [])
+  async function fetchParties() {
+    const { data, error } = await supabase.from("parties").select("*");
+    if (error) return alert(error.message);
+    setParties(data || []);
   }
 
-  const handleAddParty = async (e) => {
-    e.preventDefault()
+  useEffect(() => {
+    if (role) fetchParties();
+  }, [role]);
 
-    if (role !== "super_admin") {
-      alert("Not allowed")
-      return
-    }
+  const handleAddParty = async (event) => {
+    event.preventDefault();
+    if (role !== "super_admin") return alert("Not allowed");
 
-    const { data, error } = await supabase.from("parties").insert([
-      {
-        party_name: partyName,
-        address,
-        gst_number: gstNumber,
-        contact_person: contactPerson,
-        contact_number: contactNumber,
-        state
-      }
-    ])
+    const { error } = await supabase.from("parties").insert([{ party_name: partyName, address, gst_number: gstNumber, contact_person: contactPerson, contact_number: contactNumber, state }]);
+    if (error) return alert(error.message);
 
-    console.log("Insert party:", data, error)
-
-    if (error) {
-      alert(error.message)
-      return
-    }
-
-    setPartyName("")
-    setAddress("")
-    setGstNumber("")
-    setContactPerson("")
-    setContactNumber("")
-    setState("")
-
-    fetchParties()
-  }
+    setPartyName(""); setAddress(""); setGstNumber(""); setContactPerson(""); setContactNumber(""); setState("");
+    fetchParties();
+  };
 
   return (
-    <div>
-      <div style={{ padding: 20 }}>
-        <h2>Parties</h2>
-
-        {role === "super_admin" && (
-          <form onSubmit={handleAddParty}>
-            <input
-              placeholder="Party Name"
-              value={partyName}
-              onChange={(e) => setPartyName(e.target.value)}
-            />
-            <br /><br />
-
-            <input
-              placeholder="Address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-            <br /><br />
-
-            <input
-              placeholder="GST Number"
-              value={gstNumber}
-              onChange={(e) => setGstNumber(e.target.value)}
-            />
-            <br /><br />
-
-            <input
-              placeholder="Contact Person"
-              value={contactPerson}
-              onChange={(e) => setContactPerson(e.target.value)}
-            />
-            <br /><br />
-
-            <input
-              placeholder="Contact Number"
-              value={contactNumber}
-              onChange={(e) => setContactNumber(e.target.value)}
-            />
-            <br /><br />
-
-            <input
-              placeholder="State"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            />
-            <br /><br />
-
-            <button type="submit">Add Party</button>
-          </form>
-        )}
-
-        <hr />
-
-        <h3>Party List</h3>
-
-        {parties.map((party) => (
-          <div key={party.id} style={{ marginBottom: 10 }}>
-            <strong>{party.party_name}</strong>
-            <br />
-            GST: {party.gst_number}
-            <br />
-            State: {party.state}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+    <section className="page-card">
+      <h2 className="page-title">Parties</h2>
+      {role === "super_admin" && (
+        <form onSubmit={handleAddParty} className="grid-2">
+          <div className="field"><label>Party Name</label><input value={partyName} onChange={(e) => setPartyName(e.target.value)} /></div>
+          <div className="field"><label>GST Number</label><input value={gstNumber} onChange={(e) => setGstNumber(e.target.value)} /></div>
+          <div className="field" style={{ gridColumn: "1 / -1" }}><label>Address</label><input value={address} onChange={(e) => setAddress(e.target.value)} /></div>
+          <div className="field"><label>Contact Person</label><input value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} /></div>
+          <div className="field"><label>Contact Number</label><input value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} /></div>
+          <div className="field"><label>State</label><input value={state} onChange={(e) => setState(e.target.value)} /></div>
+          <div><button type="submit">Add Party</button></div>
+        </form>
+      )}
+      <h3>Party List</h3>
+      <div className="summary-grid">{parties.map((party) => <div key={party.id} className="summary-item"><strong>{party.party_name}</strong><p className="muted">GST: {party.gst_number}</p><p className="muted">State: {party.state}</p></div>)}</div>
+    </section>
+  );
 }
