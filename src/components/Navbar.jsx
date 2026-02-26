@@ -1,35 +1,39 @@
-import { Link } from "react-router-dom"
-import { supabase } from "../lib/supabase"
+import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 
 export default function Navbar({ role }) {
-
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-  }
+    await supabase.auth.signOut();
+  };
 
   return (
-    <div style={{ padding: 20, borderBottom: "1px solid #ccc" }}>
-      
-      <Link to="/dashboard">Dashboard</Link>
+    <header className="navbar no-print">
+      <nav className="nav-links">
+        <Link className="nav-link" to="/dashboard">
+          Dashboard
+        </Link>
+        <Link className="nav-link" to="/invoices">
+          Invoices
+        </Link>
+        <Link className="nav-link" to="/create-invoice">
+          Create Invoice
+        </Link>
 
-      {" | "}
-      <Link to="/invoices">Invoices</Link>
+        {role === "super_admin" && (
+          <>
+            <Link className="nav-link" to="/parties">
+              Parties
+            </Link>
+            <Link className="nav-link" to="/firms">
+              Firms
+            </Link>
+          </>
+        )}
+      </nav>
 
-      {" | "}
-      
-      <Link to="/create-invoice">Create Invoice</Link>
-
-      {role === "super_admin" && (
-        <>
-          {" | "}
-          <Link to="/parties">Parties</Link>
-          {" | "}
-          <Link to="/firms">Firms</Link>
-        </>
-      )}
-
-      {" | "}
-      <button onClick={handleLogout}>Logout</button>
-    </div>
-  )
+      <button className="secondary" onClick={handleLogout}>
+        Logout
+      </button>
+    </header>
+  );
 }
