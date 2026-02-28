@@ -1,39 +1,56 @@
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import BrandLogo from "./BrandLogo";
 
 export default function Navbar({ role }) {
+  const navigate = useNavigate();
+
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    navigate("/dashboard", { replace: true });
   };
 
   return (
-    <header className="navbar no-print">
-      <nav className="nav-links">
-        <Link className="nav-link" to="/dashboard">
-          Dashboard
-        </Link>
-        <Link className="nav-link" to="/invoices">
-          Invoices
-        </Link>
-        <Link className="nav-link" to="/create-invoice">
-          Create Invoice
-        </Link>
+    <>
+      <header className="mobile-topbar no-print">
+        <div className="brand-cluster">
+          <BrandLogo size={34} compact />
+          <div>
+            <strong>SVEW Billing</strong>
+            <p className="muted">Invoice Console</p>
+          </div>
+        </div>
 
+        <button className="secondary" onClick={handleLogout}>
+          Logout
+        </button>
+      </header>
+
+      <nav className="mobile-tabbar no-print">
+        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/dashboard">
+          Dashboard
+        </NavLink>
+        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/invoices">
+          Invoices
+        </NavLink>
+        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/create-invoice">
+          New
+        </NavLink>
         {role === "super_admin" && (
           <>
-            <Link className="nav-link" to="/parties">
+            <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/parties">
               Parties
-            </Link>
-            <Link className="nav-link" to="/firms">
+            </NavLink>
+            <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/firms">
               Firms
-            </Link>
+            </NavLink>
           </>
         )}
       </nav>
-
-      <button className="secondary" onClick={handleLogout}>
-        Logout
-      </button>
-    </header>
+    </>
   );
 }

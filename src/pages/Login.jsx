@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import BrandLogo from "../components/BrandLogo";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,6 +20,8 @@ export default function Login() {
 
     if (error) {
       alert(error.message);
+    } else {
+      navigate("/dashboard", { replace: true });
     }
 
     setLoading(false);
@@ -25,6 +30,13 @@ export default function Login() {
   return (
     <div className="auth-shell">
       <div className="page-card auth-card">
+        <div className="brand-cluster auth-brand">
+          <BrandLogo size={44} />
+          <div>
+            <strong>SVEW Billing</strong>
+            <p className="muted">Mobile Invoice Suite</p>
+          </div>
+        </div>
         <h2 className="page-title">Invoice System Login</h2>
         <p className="muted">Sign in to manage invoices, firms, and parties.</p>
         <form onSubmit={handleLogin} className="grid-2">
