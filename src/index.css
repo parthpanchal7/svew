@@ -335,6 +335,8 @@ th {
   background: #fff;
   border: 1px solid #d2def8;
   padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .invoice-header {
@@ -448,10 +450,9 @@ th {
 }
 
 .invoice-items-wrap {
-  margin-top: 0.85rem;
-  border: 1px solid #dce5f8;
-  border-radius: 12px;
-  overflow: hidden;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .invoice-items-table {
@@ -483,6 +484,7 @@ th {
    grid-template-columns: 2fr 1fr;
   gap: 1rem;
   align-items: stretch;
+  page-break-inside: avoid;
 }
 
 .invoice-note-box {
@@ -521,6 +523,16 @@ th {
   font-size: 0.92rem;
 }
 
+.invoice-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.invoice-bottom {
+  margin-top: auto;
+}
+
 .invoice-footer {
   margin-top: 1rem;
   border-top: 1px solid #dae4fa;
@@ -529,6 +541,7 @@ th {
   justify-content: space-between;
   gap: 0.8rem;
   align-items: flex-end;
+  page-break-inside: avoid;
 }
 
 .invoice-signature {
@@ -586,6 +599,11 @@ th {
   text-align: center;
   font-size: 0.75rem;
   color: #6b7c93;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (min-width: 900px) {
@@ -658,6 +676,23 @@ th {
 
 @media print {
 
+   @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  html, body {
+    height: 100%;
+  }
+
+  .invoice-document {
+    width: 190mm;
+    min-height: 260mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
   body {
     font-size: 12px;
     line-height: 1.4;
@@ -688,6 +723,53 @@ th {
   .no-print * {
     display: none !important;
     visibility: hidden !important;
+  }
+
+   .invoice-header {
+    padding-bottom: 6px;
+  }
+
+  .invoice-party-grid {
+    margin-top: 6px;
+    gap: 6px;
+  }
+
+  .invoice-items-wrap {
+    margin-top: 6px;
+    max-height: 40mm;
+    overflow: hidden;
+  }
+
+  .invoice-note-box {
+    margin-top: 6px;
+    padding: 6px;
+  }
+
+  .invoice-party-card {
+    padding: 6px;
+  }
+
+  .invoice-totals-row {
+    margin-top: 6px;
+    gap: 6px;
+  }
+
+  .invoice-footer {
+    margin-top: 6px;
+    padding-top: 6px;
+    page-break-inside: avoid;
+  }
+
+  .invoice-dev-footer {
+    display: none !important;
+  }
+
+  .invoice-totals-row,
+  .invoice-note-box,
+  .invoice-party-card,
+  .invoice-footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
 }

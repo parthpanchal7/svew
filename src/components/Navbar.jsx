@@ -31,21 +31,46 @@ export default function Navbar({ role }) {
       </header>
 
       <nav className="mobile-tabbar no-print">
-        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/dashboard">
+        <NavLink
+          className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`}
+          to="/dashboard"
+        >
           Dashboard
         </NavLink>
-        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/invoices">
+        <NavLink
+          className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`}
+          to="/invoices"
+        >
           Invoices
         </NavLink>
-        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/create-invoice">
+        <NavLink
+          className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`}
+          to="/create-invoice"
+        >
           New
+        </NavLink>
+        <NavLink to="/payments" className="tab-link">
+          Payments
+        </NavLink>
+        <NavLink to="/ledger" className="tab-link">
+          Ledger
         </NavLink>
         {role === "super_admin" && (
           <>
-            <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/parties">
+            <NavLink
+              className={({ isActive }) =>
+                `tab-link ${isActive ? "active" : ""}`
+              }
+              to="/parties"
+            >
               Parties
             </NavLink>
-            <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/firms">
+            <NavLink
+              className={({ isActive }) =>
+                `tab-link ${isActive ? "active" : ""}`
+              }
+              to="/firms"
+            >
               Firms
             </NavLink>
           </>
