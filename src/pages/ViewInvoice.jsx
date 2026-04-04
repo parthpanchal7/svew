@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
+import toWords from "../utils/numberToWords";
+import logo from "../assets/logo_svew.png";
+
 export default function ViewInvoice() {
   const { id } = useParams();
   const [invoice, setInvoice] = useState(null);
@@ -14,10 +17,7 @@ export default function ViewInvoice() {
       .select(`*, firms (*), parties (*)`)
       .eq("id", id)
       .single();
-    const { data: itemData } = await supabase
-      .from("invoice_items")
-      .select("*")
-      .eq("invoice_id", id);
+    const { data: itemData } = await supabase.from("invoice_items").select("*").eq("invoice_id", id);
     setInvoice(data);
     setItems(itemData || []);
   }
@@ -46,87 +46,24 @@ export default function ViewInvoice() {
     });
   };
 
-  function numberToWordsIndian(num) {
-    const a = [
-      "",
-      "One",
-      "Two",
-      "Three",
-      "Four",
-      "Five",
-      "Six",
-      "Seven",
-      "Eight",
-      "Nine",
-      "Ten",
-      "Eleven",
-      "Twelve",
-      "Thirteen",
-      "Fourteen",
-      "Fifteen",
-      "Sixteen",
-      "Seventeen",
-      "Eighteen",
-      "Nineteen",
-    ];
-
-    const b = [
-      "",
-      "",
-      "Twenty",
-      "Thirty",
-      "Forty",
-      "Fifty",
-      "Sixty",
-      "Seventy",
-      "Eighty",
-      "Ninety",
-    ];
-
-    if ((num = num.toString()).length > 9) return "Overflow";
-
-    const n = ("000000000" + num)
-      .substr(-9)
-      .match(/(\d{2})(\d{2})(\d{2})(\d{3})/);
-    if (!n) return "";
-
-    let str = "";
-    str +=
-      Number(n[1]) !== 0
-        ? (a[Number(n[1])] || b[n[1][0]] + " " + a[n[1][1]]) + " Crore "
-        : "";
-
-    str +=
-      Number(n[2]) !== 0
-        ? (a[Number(n[2])] || b[n[2][0]] + " " + a[n[2][1]]) + " Lakh "
-        : "";
-
-    str +=
-      Number(n[3]) !== 0
-        ? (a[Number(n[3])] || b[n[3][0]] + " " + a[n[3][1]]) + " Thousand "
-        : "";
-
-    str +=
-      Number(n[4]) !== 0
-        ? a[Number(n[4])] || b[n[4][0]] + " " + a[n[4][1]]
-        : "";
-
-    return str.trim() + " Only";
-  }
-
-  const amountInWords = numberToWordsIndian(
-    Math.round(invoice.grand_total || 0),
-  );
+  const amountInWords = toWords.convert(invoice.grand_total || 0);
 
   return (
     <section className="page-card invoice-document">
       {/* ================= HEADER ================= */}
-      <header className="invoice-header">
+      <header className="invoice-header" style={{ alignItems: "center", borderBottom: "2pt solid var(--brand)" }}>
         <div className="invoice-company-block">
           <p className="invoice-eyebrow">Tax Invoice</p>
-          <h2 className="invoice-company">{invoice.firms?.firm_name}</h2>
-          <p className="invoice-text">{invoice.firms?.address}</p>
-          <p className="invoice-text">GSTIN: {invoice.firms?.gst_number}</p>
+          <h2 className="invoice-company" style={{ color: "var(--brand)", fontSize: "1.6rem" }}>{invoice.firms?.firm_name}</h2>
+          <p className="invoice-text"><strong>GSTIN:</strong> {invoice.firms?.gst_number}</p>
+          <p className="invoice-text" style={{ fontSize: "0.8rem" }}>{invoice.firms?.address}</p>
+          <div style={{ marginTop: "2mm", display: "flex", gap: "10mm" }}>
+            {invoice.firms?.contact_number && <p className="invoice-text"><strong>Ph:</strong> {invoice.firms?.contact_number}</p>}
+            {invoice.firms?.email && <p className="invoice-text"><strong>Email:</strong> {invoice.firms?.email}</p>}
+          </div>
+        </div>
+        <div style={{ marginLeft: "auto", paddingLeft: "1rem" }}>
+          <img src={logo} alt="Logo" style={{ height: "60px", objectFit: "contain" }} />
         </div>
       </header>
 
@@ -141,22 +78,20 @@ export default function ViewInvoice() {
             <p className="invoice-text">State: {invoice.parties?.state}</p>
           </article>
 
-          <article className="invoice-party-card">
-            <div className="invoice-meta-block">
-              <div>
-                <span>Invoice No</span>
-                <strong>{invoice.invoice_number}</strong>
-              </div>
-              <div>
-                <span>Date</span>
-                <strong>{fmtDate(invoice.invoice_date)}</strong>
-              </div>
-              <div>
-                <span>Financial Year</span>
-                <strong>{invoice.financial_year}</strong>
-              </div>
+          <div className="invoice-meta-block">
+            <div>
+              <span>Invoice No</span>
+              <strong>{invoice.invoice_number}</strong>
             </div>
-          </article>
+            <div>
+              <span>Date</span>
+              <strong>{fmtDate(invoice.invoice_date)}</strong>
+            </div>
+            <div>
+              <span>Financial Year</span>
+              <strong>20{invoice.financial_year.slice(0, 2)}-{invoice.financial_year.slice(2, 4)}</strong>
+            </div>
+          </div>
         </section>
 
         {/* ================= ITEMS ================= */}
@@ -198,27 +133,13 @@ export default function ViewInvoice() {
               <p className="invoice-label">Amount in Words</p>
               <p className="invoice-text">Rs. {amountInWords}</p>
             </div>
-
-            <div className="invoice-note-box">
-              <p className="invoice-label">Terms & Conditions</p>
-              <p className="invoice-text">
-                (1) Our responsibility ceases when goods are delivered.
-              </p>
-              <p className="invoice-text">
-                (2) Payment by A/c Payee Cheque preferred.
-              </p>
-              <p className="invoice-text">
-                (3) Subject to Ahmedabad Jurisdiction.
-              </p>
-            </div>
-
-            <div className="invoice-party-card">
-              <p className="invoice-label">Bank Details</p>
-              <p className="invoice-text">Bank: {invoice.firms?.bank_name}</p>
-              <p className="invoice-text">
-                A/C No: {invoice.firms?.account_number}
-              </p>
-              <p className="invoice-text">IFSC: {invoice.firms?.ifsc_code}</p>
+            <div className="invoice-party-card" style={{ marginTop: "1rem", display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+              <div style={{ flex: 1 }}>
+                <p className="invoice-label">Bank Details</p>
+                <p className="invoice-text">Bank: {invoice.firms?.bank_name}</p>
+                <p className="invoice-text">A/C No: {invoice.firms?.account_number}</p>
+                <p className="invoice-text">IFSC: {invoice.firms?.ifsc_code}</p>
+              </div>
             </div>
           </div>
 
@@ -246,10 +167,15 @@ export default function ViewInvoice() {
           </div>
         </section>
 
+        <div className="invoice-note-box" style={{ marginTop: "1rem" }}>
+          <p className="invoice-label">Terms & Conditions</p>
+          <p className="invoice-text">
+            (1) Our responsibility ceases when goods are delivered. (2) Payment by A/c Payee Cheque preferred. (3) Subject to Ahmedabad Jurisdiction.
+          </p>
+        </div>
+
         {/* ================= FOOTER ================= */}
         <footer className="invoice-footer">
-          <p className="invoice-text">This is a computer generated invoice.</p>
-
           <div className="invoice-signature">
             <p>For {invoice.firms?.firm_name}</p>
             <div className="sign-line" />
@@ -260,16 +186,21 @@ export default function ViewInvoice() {
         <div className="invoice-dev-footer">
           <p>
             Invoice system developed by{" "}
-            <a href="https://your-portfolio-link.com" target="_blank">
+            <a href="https://parthpanchal7.netlify.app" target="_blank">
               Parth Panchal
             </a>
           </p>
         </div>
       </div>
 
-      <button className="no-print" onClick={() => window.print()}>
-        Print Invoice
-      </button>
+      <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }} className="no-print">
+        <button className="primary" onClick={() => window.print()}>
+          Print / Download PDF
+        </button>
+        <button className="secondary" onClick={() => window.history.back()}>
+          Back to List
+        </button>
+      </div>
     </section>
   );
 }

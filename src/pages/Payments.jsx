@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-export default function Payments() {
+export default function Payments({ role }) {
   const [parties, setParties] = useState([]);
   const [payments, setPayments] = useState([]);
 
@@ -137,7 +137,13 @@ export default function Payments() {
 
       <br />
 
-      <button onClick={handleAddPayment}>Add Payment</button>
+      <br />
+      {role === "super_admin" && (
+        <button onClick={handleAddPayment}>Add Payment</button>
+      )}
+      {role !== "super_admin" && (
+        <p className="muted">Read-only access. Only administrators can record payments.</p>
+      )}
 
       <hr />
 

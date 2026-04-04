@@ -18,7 +18,11 @@ export default function Firms({ role }) {
     bank_name: "",
     account_number: "",
     ifsc_code: "",
+    contact_number: "",
+    email: "",
   });
+  const [contactNumber, setContactNumber] = useState("");
+  const [email, setEmail] = useState("");
 
   async function fetchFirms() {
     const { data, error } = await supabase.from("firms").select("*");
@@ -41,6 +45,8 @@ export default function Firms({ role }) {
       bank_name: bankName,
       account_number: accountNumber,
       ifsc_code: ifscCode,
+      contact_number: contactNumber,
+      email: email,
     }]);
     if (error) return alert(error.message);
 
@@ -50,6 +56,8 @@ export default function Firms({ role }) {
     setBankName("");
     setAccountNumber("");
     setIfscCode("");
+    setContactNumber("");
+    setEmail("");
     fetchFirms();
   };
 
@@ -62,6 +70,8 @@ export default function Firms({ role }) {
       bank_name: firm.bank_name || "",
       account_number: firm.account_number || "",
       ifsc_code: firm.ifsc_code || "",
+      contact_number: firm.contact_number || "",
+      email: firm.email || "",
     });
   };
 
@@ -74,6 +84,8 @@ export default function Firms({ role }) {
       bank_name: "",
       account_number: "",
       ifsc_code: "",
+      contact_number: "",
+      email: "",
     });
   };
 
@@ -104,6 +116,8 @@ export default function Firms({ role }) {
           <div className="field"><label>Bank Name</label><input value={bankName} onChange={(e) => setBankName(e.target.value)} /></div>
           <div className="field"><label>Account Number</label><input value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} /></div>
           <div className="field"><label>IFSC Code</label><input value={ifscCode} onChange={(e) => setIfscCode(e.target.value)} /></div>
+          <div className="field"><label>Contact Number</label><input value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} /></div>
+          <div className="field"><label>Email Address</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
           <div><button type="submit">Add Firm</button></div>
         </form>
       )}
@@ -129,6 +143,8 @@ export default function Firms({ role }) {
               <span>Bank: {firm.bank_name || "-"}</span>
               <span>A/C: {firm.account_number || "-"}</span>
               <span>IFSC: {firm.ifsc_code || "-"}</span>
+              {firm.contact_number && <span>Ph: {firm.contact_number}</span>}
+              {firm.email && <span>Email: {firm.email}</span>}
             </div>
 
             {editingId === firm.id && (
@@ -156,6 +172,14 @@ export default function Firms({ role }) {
                 <div className="field">
                   <label>IFSC Code</label>
                   <input value={editForm.ifsc_code} onChange={(e) => setEditForm((prev) => ({ ...prev, ifsc_code: e.target.value }))} />
+                </div>
+                <div className="field">
+                  <label>Contact Number</label>
+                  <input value={editForm.contact_number} onChange={(e) => setEditForm((prev) => ({ ...prev, contact_number: e.target.value }))} />
+                </div>
+                <div className="field">
+                  <label>Email Address</label>
+                  <input type="email" value={editForm.email} onChange={(e) => setEditForm((prev) => ({ ...prev, email: e.target.value }))} />
                 </div>
                 <div className="record-actions">
                   <button type="button" onClick={() => handleSaveEdit(firm.id)}>Save Changes</button>
