@@ -8,7 +8,7 @@ export default function CreateInvoice() {
 
   const [selectedFirm, setSelectedFirm] = useState("");
   const [selectedParty, setSelectedParty] = useState("");
-  const [invoiceDate, setInvoiceDate] = useState("");
+  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split("T")[0]);
   const [gstPercent, setGstPercent] = useState(18);
 
   const [invoiceNumber, setInvoiceNumber] = useState("");
@@ -69,7 +69,10 @@ export default function CreateInvoice() {
 
     if (data && data.length > 0) {
       const lastInvoice = data[0].invoice_number;
-      const lastNumber = parseInt(lastInvoice.split("/")[1]);
+      const parts = lastInvoice.split("/");
+      // Handle potential formats like FY/01 or just 01
+      const lastPart = parts[parts.length - 1];
+      const lastNumber = parseInt(lastPart) || 0;
       nextNumber = lastNumber + 1;
     }
 
@@ -164,7 +167,7 @@ export default function CreateInvoice() {
 
       setSelectedFirm("");
       setSelectedParty("");
-      setInvoiceDate("");
+      setInvoiceDate(new Date().toISOString().split("T")[0]);
       setInvoiceNumber("");
       setFinancialYear("");
       setItems([
@@ -187,46 +190,69 @@ export default function CreateInvoice() {
     <section className="page-card">
       <h2 className="page-title">Create Invoice</h2>
 
-      <div className="grid-2">
-        <div className="field">
-          <label>Invoice Date</label>
-          <input type="date" value={invoiceDate} onChange={(e) => setInvoiceDate(e.target.value)} />
-        </div>
+      <div className="invoice-creation-header" style={{ marginBottom: "2rem" }}>
+        <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem", color: "var(--brand)", borderBottom: "1px solid #f0f0f0", paddingBottom: "8px" }}>
+          1. General Details
+        </h3>
+        <div className="grid-2">
+          <div className="field">
+            <label>Select Firm</label>
+            <select value={selectedFirm} onChange={(e) => setSelectedFirm(e.target.value)}>
+              <option value="">Choose your firm...</option>
+              {firms.map((firm) => (
+                <option key={firm.id} value={firm.id}>
+                  {firm.firm_name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="field">
-          <label>Invoice Number</label>
-          <input value={invoiceNumber} onChange={(e) => setInvoiceNumber(e.target.value)} />
-        </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div className="field">
+              <label>Invoice Date</label>
+              <input type="date" value={invoiceDate} onChange={(e) => setInvoiceDate(e.target.value)} />
+            </div>
 
-        <div className="field">
-          <label>Firm</label>
-          <select value={selectedFirm} onChange={(e) => setSelectedFirm(e.target.value)}>
-            <option value="">Select Firm</option>
-            {firms.map((firm) => (
-              <option key={firm.id} value={firm.id}>
-                {firm.firm_name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="field">
-          <label>Party</label>
-          <select value={selectedParty} onChange={(e) => setSelectedParty(e.target.value)}>
-            <option value="">Select Party</option>
-            {parties.map((party) => (
-              <option key={party.id} value={party.id}>
-                {party.party_name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="field">
-          <label>GST %</label>
-          <input type="number" value={gstPercent} onChange={(e) => setGstPercent(Number(e.target.value))} />
+            <div className="field">
+              <label>Invoice Number</label>
+              <input 
+                value={invoiceNumber} 
+                onChange={(e) => setInvoiceNumber(e.target.value)}
+                placeholder="Auto-generated"
+                style={{ fontWeight: "bold", color: "var(--brand)" }}
+              />
+            </div>
+          </div>
         </div>
       </div>
+
+      <div className="invoice-billing-section" style={{ marginBottom: "2rem" }}>
+        <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem", color: "var(--brand)", borderBottom: "1px solid #f0f0f0", paddingBottom: "8px" }}>
+          2. Billing & Tax
+        </h3>
+        <div className="grid-2">
+          <div className="field">
+            <label>Select Party (Billed To)</label>
+            <select value={selectedParty} onChange={(e) => setSelectedParty(e.target.value)}>
+              <option value="">Choose party...</option>
+              {parties.map((party) => (
+                <option key={party.id} value={party.id}>
+                  {party.party_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field">
+            <label>GST % (Applicable to all items)</label>
+            <input type="number" value={gstPercent} onChange={(e) => setGstPercent(Number(e.target.value))} />
+          </div>
+        </div>
+      </div>
+
+      <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem", color: "var(--brand)", borderBottom: "1px solid #f0f0f0", paddingBottom: "8px" }}>
+        3. Particulars & Items
+      </h3>
 
       <div className="table-wrap">
         <table>

@@ -149,29 +149,31 @@ export default function Payments({ role }) {
 
       <h3>Payment History</h3>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Party</th>
-            <th>Mode</th>
-            <th>Reference</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {payments.map((p) => (
-            <tr key={p.id}>
-              <td>{p.payment_date}</td>
-              <td>{p.parties?.party_name}</td>
-              <td>{p.payment_mode}</td>
-              <td>{p.reference_no}</td>
-              <td>₹ {Number(p.amount).toLocaleString("en-IN")}</td>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Party</th>
+              <th>Mode</th>
+              <th>Reference</th>
+              <th>Amount</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {payments.map((p) => (
+              <tr key={p.id}>
+                <td>{p.payment_date}</td>
+                <td>{p.parties?.party_name}</td>
+                <td>{p.payment_mode}</td>
+                <td>{p.reference_no}</td>
+                <td>₹ {Number(p.amount).toLocaleString("en-IN")}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

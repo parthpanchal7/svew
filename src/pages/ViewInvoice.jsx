@@ -62,7 +62,7 @@ export default function ViewInvoice() {
             {invoice.firms?.email && <p className="invoice-text"><strong>Email:</strong> {invoice.firms?.email}</p>}
           </div>
         </div>
-        <div style={{ marginLeft: "auto", paddingLeft: "1rem" }}>
+        <div className="no-print" style={{ marginLeft: "auto", paddingLeft: "1rem" }}>
           <img src={logo} alt="Logo" style={{ height: "60px", objectFit: "contain" }} />
         </div>
       </header>
@@ -129,11 +129,11 @@ export default function ViewInvoice() {
       <div className="invoice-bottom">
         <section className="invoice-totals-row">
           <div className="invoice-left-section">
-            <div className="invoice-note-box">
+            <div className="invoice-note-box" style={{ marginTop: 0 }}>
               <p className="invoice-label">Amount in Words</p>
               <p className="invoice-text">Rs. {amountInWords}</p>
             </div>
-            <div className="invoice-party-card" style={{ marginTop: "1rem", display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+            <div className="invoice-party-card" style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
               <div style={{ flex: 1 }}>
                 <p className="invoice-label">Bank Details</p>
                 <p className="invoice-text">Bank: {invoice.firms?.bank_name}</p>

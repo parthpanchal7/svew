@@ -241,48 +241,50 @@ export default function Ledger() {
           </header>
 
           <div className="invoice-items-wrap" style={{ marginTop: "0.2rem" }}>
-            <table className="invoice-items-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Type</th>
-                  <th>Reference</th>
-                  <th className="num">Debit</th>
-                  <th className="num">Credit</th>
-                  <th className="num">Balance</th>
-                </tr>
-              </thead>
-              <tbody>
-                {financialYear && (
-                  <tr style={{ background: "#f8fbff", fontWeight: 600 }}>
+            <div className="table-wrap">
+              <table className="invoice-items-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Reference</th>
+                    <th className="num">Debit</th>
+                    <th className="num">Credit</th>
+                    <th className="num">Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {financialYear && (
+                    <tr style={{ background: "#f8fbff", fontWeight: 600 }}>
+                      <td colSpan={5} style={{ textAlign: "right" }}>
+                        Opening Balance
+                      </td>
+                      <td className="num">{fmt(ledger.openingBalance)}</td>
+                    </tr>
+                  )}
+
+                  {ledger.entries?.map((entry, index) => (
+                    <tr key={index}>
+                      <td>{entry.date}</td>
+                      <td>{entry.type}</td>
+                      <td>{entry.ref}</td>
+                      <td className="num">{entry.debit ? fmt(entry.debit) : ""}</td>
+                      <td className="num">{entry.credit ? fmt(entry.credit) : ""}</td>
+                      <td className="num">{fmt(entry.balance)}</td>
+                    </tr>
+                  ))}
+
+                  <tr className="total-tile" style={{ borderTop: "2px solid var(--line)" }}>
                     <td colSpan={5} style={{ textAlign: "right" }}>
-                      Opening Balance
+                      <strong>Closing Balance</strong>
                     </td>
-                    <td className="num">{fmt(ledger.openingBalance)}</td>
+                    <td className="num">
+                      <strong>₹ {fmt(ledger.closingBalance)}</strong>
+                    </td>
                   </tr>
-                )}
-
-                {ledger.entries?.map((entry, index) => (
-                  <tr key={index}>
-                    <td>{entry.date}</td>
-                    <td>{entry.type}</td>
-                    <td>{entry.ref}</td>
-                    <td className="num">{entry.debit ? fmt(entry.debit) : ""}</td>
-                    <td className="num">{entry.credit ? fmt(entry.credit) : ""}</td>
-                    <td className="num">{fmt(entry.balance)}</td>
-                  </tr>
-                ))}
-
-                <tr className="total-tile" style={{ borderTop: "2px solid var(--line)" }}>
-                  <td colSpan={5} style={{ textAlign: "right" }}>
-                    <strong>Closing Balance</strong>
-                  </td>
-                  <td className="num">
-                    <strong>₹ {fmt(ledger.closingBalance)}</strong>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <footer className="invoice-footer">

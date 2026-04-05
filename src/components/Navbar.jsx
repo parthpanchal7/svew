@@ -21,60 +21,35 @@ export default function Navbar({ role }) {
           <BrandLogo size={34} compact />
           <div>
             <strong>SVEW Billing</strong>
-            <p className="muted">Invoice Console</p>
           </div>
         </div>
-
-        <button className="secondary" onClick={handleLogout}>
-          Logout
+        <button className="logout-btn-minimal" onClick={handleLogout} title="Logout">
+          Log Out
         </button>
       </header>
-
-      <nav className="mobile-tabbar no-print">
-        <NavLink
-          className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`}
-          to="/dashboard"
-        >
-          Dashboard
+ 
+      {/* Footer Navigation for Mobile */}
+      <nav className="mobile-tabbar-bottom no-print">
+        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/dashboard">
+          <span className="tab-icon">🏠</span>
+          <span className="tab-label">Home</span>
         </NavLink>
-        <NavLink
-          className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`}
-          to="/invoices"
-        >
-          Invoices
+        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/invoices">
+          <span className="tab-icon">📋</span>
+          <span className="tab-label">Bills</span>
         </NavLink>
-        <NavLink
-          className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`}
-          to="/create-invoice"
-        >
-          New
+        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/create-invoice">
+          <span className="tab-icon-plus">+</span>
+          <span className="tab-label">Create</span>
         </NavLink>
-        <NavLink to="/payments" className="tab-link">
-          Payments
+        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/ledger">
+          <span className="tab-icon">📖</span>
+          <span className="tab-label">Ledger</span>
         </NavLink>
-        <NavLink to="/ledger" className="tab-link">
-          Ledger
+        <NavLink className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`} to="/payments">
+          <span className="tab-icon">💰</span>
+          <span className="tab-label">Pay</span>
         </NavLink>
-        {role === "super_admin" && (
-          <>
-            <NavLink
-              className={({ isActive }) =>
-                `tab-link ${isActive ? "active" : ""}`
-              }
-              to="/parties"
-            >
-              Parties
-            </NavLink>
-            <NavLink
-              className={({ isActive }) =>
-                `tab-link ${isActive ? "active" : ""}`
-              }
-              to="/firms"
-            >
-              Firms
-            </NavLink>
-          </>
-        )}
       </nav>
     </>
   );

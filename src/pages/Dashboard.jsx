@@ -56,15 +56,15 @@ export default function Dashboard({ role }) {
 
   return (
     <div className="dashboard-container">
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem", flexWrap: "wrap" }}>
         <div>
           <h1 style={{ fontSize: "1.8rem", margin: 0, color: "var(--brand)" }}>Dashboard</h1>
           <p className="muted" style={{ margin: "4px 0" }}>Financial Year 2026-27 Summary</p>
         </div>
-        
+
         <div style={{ display: "flex", gap: "10px" }}>
-          <select 
-            value={selectedFirm} 
+          <select
+            value={selectedFirm}
             onChange={(e) => setSelectedFirm(e.target.value)}
             style={{ padding: "8px 12px", border: "1px solid #ddd", borderRadius: "10px", outline: "none", background: "#fff", cursor: "pointer" }}
           >
@@ -80,7 +80,7 @@ export default function Dashboard({ role }) {
           <p className="stat-value">{fmt(stats.totalSales)}</p>
           <div className="stat-footer">Across {stats.invoices} Invoices</div>
         </div>
-        
+
         <div className="summary-item" style={{ background: "linear-gradient(135deg, #f77f00, #d62828)", color: "#fff", border: "none" }}>
           <strong style={{ opacity: 0.9, fontSize: "0.9rem" }}>Pending Collection</strong>
           <p className="stat-value">{fmt(stats.outstanding)}</p>
@@ -100,7 +100,7 @@ export default function Dashboard({ role }) {
         </div>
       </section>
 
-      <div className="dashboard-content-grid" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "2rem" }}>
+      <div className="dashboard-main-layout">
         <section className="page-card" style={{ margin: 0, padding: "1.5rem" }}>
           <h3 style={{ marginBottom: "1.2rem", fontSize: "1.1rem" }}>Quick Operations</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "1rem" }}>
@@ -121,20 +121,20 @@ export default function Dashboard({ role }) {
               Payments
             </Link>
           </div>
-          
+
           <div style={{ marginTop: "2.5rem" }}>
             <h3 style={{ marginBottom: "1rem", fontSize: "1.1rem" }}>FY 2026-27 Target Completion</h3>
             <div style={{ padding: "1.5rem", background: "#f8fafd", borderRadius: "12px" }}>
-               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                  <span style={{ fontSize: "0.9rem", fontWeight: "600" }}>Monthly Sales Target</span>
-                  <span style={{ fontSize: "0.9rem", color: "var(--brand)" }}>72% Achieved</span>
-               </div>
-               <div style={{ height: "10px", background: "#e9ecef", borderRadius: "5px", overflow: "hidden" }}>
-                  <div style={{ width: "72%", height: "100%", background: "linear-gradient(90deg, #05668d, #02c39a)", borderRadius: "5px" }}></div>
-               </div>
-               <p className="muted" style={{ fontSize: "0.8rem", marginTop: "12px" }}>
-                 * Projected growth is 12% higher than previous financial year (25-26).
-               </p>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                <span style={{ fontSize: "0.9rem", fontWeight: "600" }}>Monthly Sales Target</span>
+                <span style={{ fontSize: "0.9rem", color: "var(--brand)" }}>72% Achieved</span>
+              </div>
+              <div style={{ height: "10px", background: "#e9ecef", borderRadius: "5px", overflow: "hidden" }}>
+                <div style={{ width: "72%", height: "100%", background: "linear-gradient(90deg, #05668d, #02c39a)", borderRadius: "5px" }}></div>
+              </div>
+              <p className="muted" style={{ fontSize: "0.8rem", marginTop: "12px" }}>
+                * Projected growth is 12% higher than previous financial year (25-26).
+              </p>
             </div>
           </div>
         </section>
@@ -149,27 +149,27 @@ export default function Dashboard({ role }) {
           </div>
 
           <div>
-             <h3 style={{ marginBottom: "1rem", fontSize: "1.1rem" }}>System Health</h3>
-             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "0.9rem" }}>
-                  <div style={{ width: "8px", height: "8px", background: "#27ae60", borderRadius: "50%" }}></div>
-                  <span>Database: Connected</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "0.9rem" }}>
-                  <div style={{ width: "8px", height: "8px", background: "#27ae60", borderRadius: "50%" }}></div>
-                  <span>PDF Engine: Optimized</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "0.9rem" }}>
-                  <div style={{ width: "8px", height: "8px", background: "#27ae60", borderRadius: "50%" }}></div>
-                  <span>Secure SSL: Active</span>
-                </div>
-             </div>
+            <h3 style={{ marginBottom: "1rem", fontSize: "1.1rem" }}>System Health</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "0.9rem" }}>
+                <div style={{ width: "8px", height: "8px", background: "#27ae60", borderRadius: "50%" }}></div>
+                <span>Database: Connected</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "0.9rem" }}>
+                <div style={{ width: "8px", height: "8px", background: "#27ae60", borderRadius: "50%" }}></div>
+                <span>PDF Engine: Optimized</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "0.9rem" }}>
+                <div style={{ width: "8px", height: "8px", background: "#27ae60", borderRadius: "50%" }}></div>
+                <span>Secure SSL: Active</span>
+              </div>
+            </div>
           </div>
 
           <div style={{ marginTop: "auto", padding: "1rem", background: "rgba(5, 102, 141, 0.05)", borderRadius: "10px", borderLeft: "4px solid var(--brand)" }}>
-             <p style={{ fontSize: "0.85rem", margin: 0, color: "#2d3436" }}>
-               <strong>Tip:</strong> You can export party ledgers directly from the Ledger page with the new A4 optimized format.
-             </p>
+            <p style={{ fontSize: "0.85rem", margin: 0, color: "#2d3436" }}>
+              <strong>Tip:</strong> You can export party ledgers directly from the Ledger page with the new A4 optimized format.
+            </p>
           </div>
         </section>
       </div>
