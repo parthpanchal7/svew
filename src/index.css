@@ -1048,3 +1048,40 @@ th {
     gap: 2rem;
   }
 }
+
+
+/* ================= DESKTOP NAVIGATION ================= */
+.navbar-desktop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 0.7rem 1.2rem;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(8px);
+}
+
+.desktop-nav-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.desktop-link {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+
+.desktop-link:hover {
+  color: var(--ink);
+}
+
+.desktop-link.active {
+  color: var(--brand);
+  font-weight: 700;
+}

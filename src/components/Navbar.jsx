@@ -16,6 +16,32 @@ export default function Navbar({ role }) {
 
   return (
     <>
+      {/* Desktop Navigation */}
+      <header className="navbar-desktop no-print">
+        <div className="brand-cluster">
+          <BrandLogo size={34} compact />
+          <div>
+            <strong>SVEW Billing</strong>
+            <p className="muted" style={{ fontSize: "0.8rem", margin: 0 }}>Invoice Console</p>
+          </div>
+        </div>
+        <nav className="desktop-nav-links">
+          <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/dashboard">Dashboard</NavLink>
+          <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/invoices">Invoices</NavLink>
+          <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/create-invoice">Create</NavLink>
+          <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/ledger">Ledger</NavLink>
+          <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/payments">Payments</NavLink>
+          {role === "super_admin" && (
+            <>
+              <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/parties">Parties</NavLink>
+              <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/firms">Firms</NavLink>
+            </>
+          )}
+        </nav>
+        <button className="secondary" onClick={handleLogout}>Log Out</button>
+      </header>
+
+      {/* Mobile Top Header */}
       <header className="mobile-topbar no-print">
         <div className="brand-cluster">
           <BrandLogo size={34} compact />
