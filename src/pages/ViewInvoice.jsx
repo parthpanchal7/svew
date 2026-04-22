@@ -26,6 +26,30 @@ export default function ViewInvoice() {
     fetchInvoice();
   }, [id]);
 
+  useEffect(() => {
+    if (invoice) {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get("download") === "true") {
+        setTimeout(() => {
+          const originalTitle = document.title;
+          const serialNo = invoice.invoice_number.split('/').pop() || invoice.invoice_number;
+          const safePartyName = invoice.parties?.party_name
+            ? invoice.parties.party_name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')
+            : 'Party';
+            
+          document.title = `${serialNo}_${safePartyName}`;
+          
+          // Browser will pause execution while print dialog is open
+          window.print();
+          
+          // These run immediately after the user saves the PDF or cancels
+          document.title = originalTitle;
+          window.close(); // Close the temporary tab silently
+        }, 600); // Brief delay ensuring all CSS and images are rendered
+      }
+    }
+  }, [invoice]);
+
   if (!invoice) return <div className="page-card">Loading...</div>;
 
   const fmtCurrency = (value) =>
@@ -47,6 +71,25 @@ export default function ViewInvoice() {
   };
 
   const amountInWords = toWords.convert(invoice.grand_total || 0);
+
+  const handlePrint = () => {
+    const originalTitle = document.title;
+    
+    // Create custom filename like: 01_PartyName
+    const serialNo = invoice.invoice_number.split('/').pop() || invoice.invoice_number;
+    const safePartyName = invoice.parties?.party_name
+      ? invoice.parties.party_name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')
+      : 'Party';
+      
+    document.title = `${serialNo}_${safePartyName}`;
+    
+    window.print();
+    
+    // Restore original title after print dialog closes
+    setTimeout(() => {
+      document.title = originalTitle;
+    }, 1000);
+  };
 
   return (
     <section className="page-card invoice-document">
@@ -194,7 +237,7 @@ export default function ViewInvoice() {
       </div>
 
       <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }} className="no-print">
-        <button className="primary" onClick={() => window.print()}>
+        <button id="print-btn" className="primary" onClick={handlePrint}>
           Print / Download PDF
         </button>
         <button className="secondary" onClick={() => window.history.back()}>

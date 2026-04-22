@@ -125,21 +125,21 @@ a {
 }
 
 .tab-link {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: #cbd5e1;
-    font-size: 0.6rem;
-    font-weight: 500;
-    flex: 1;
-    transition: all 0.2s;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #cbd5e1;
+  font-size: 0.6rem;
+  font-weight: 500;
+  flex: 1;
+  transition: all 0.2s;
+}
 
 .tab-link.active {
-    color: var(--brand);
-    font-weight: 700;
-  }
+  color: var(--brand);
+  font-weight: 700;
+}
 
 .nav-link {
   color: #0d4f83;
@@ -735,7 +735,7 @@ th {
     /* Block instead of Flex to prevent forced gaps */
     border: none !important;
     box-shadow: none !important;
-    padding: 0 !important;
+    padding: 0px !important;
     margin: 0 !important;
   }
 
@@ -884,7 +884,8 @@ th {
 /* ================= MOBILE OPTIMIZATIONS ================= */
 @media (max-width: 768px) {
   .app-shell {
-    padding-bottom: 75px !important; /* Space for bottom navigation */
+    padding-bottom: 75px !important;
+    /* Space for bottom navigation */
   }
 
   /* Assuming Desktop Navbar uses .navbar class */
@@ -918,7 +919,7 @@ th {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(0,0,0,0.05);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
     padding: 8px 0 12px 0;
     justify-content: space-around;
     z-index: 1000;
@@ -946,6 +947,7 @@ th {
     filter: grayscale(100%) opacity(60%);
     transition: all 0.2s;
   }
+
   .tab-link.active .tab-icon {
     filter: grayscale(0%) opacity(100%);
     transform: translateY(-2px);
@@ -1006,7 +1008,7 @@ th {
     font-size: 0.8rem;
     font-weight: 600;
   }
-  
+
   .no-mobile {
     display: none !important;
   }
@@ -1015,7 +1017,8 @@ th {
   .table-wrap {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    width: calc(100vw - 1.6rem); /* ensure it doesn't break parent flex */
+    width: calc(100vw - 1.6rem);
+    /* ensure it doesn't break parent flex */
     margin-left: -0.8rem;
     margin-right: -0.8rem;
     border-radius: 0;
@@ -1024,12 +1027,12 @@ th {
     padding-left: 0.8rem;
     padding-right: 0.8rem;
   }
-  
+
   .table-wrap table {
     min-width: 600px;
   }
-  
-  .table-wrap th, 
+
+  .table-wrap th,
   .table-wrap td {
     padding: 0.5rem 0.4rem;
     font-size: 0.8rem;
@@ -1038,10 +1041,12 @@ th {
 }
 
 @media (min-width: 769px) {
-  .mobile-topbar, .mobile-tabbar-bottom {
+
+  .mobile-topbar,
+  .mobile-tabbar-bottom {
     display: none !important;
   }
-  
+
   .dashboard-main-layout {
     display: grid;
     grid-template-columns: 1fr 340px;

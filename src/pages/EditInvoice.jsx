@@ -19,10 +19,29 @@ export default function EditInvoice() {
   }, [id]);
 
   const handleUpdate = async (formData) => {
-    await supabase.from("invoices").update(formData).eq("id", id);
-    await supabase.from("invoice_items").delete().eq("invoice_id", id);
-    await supabase.from("invoice_items").insert(formData.items.map((item) => ({ ...item, invoice_id: id })));
-    alert("Invoice updated");
+    const { items, ...invoiceUpdateData } = formData;
+    
+    try {
+      const { error: invError } = await supabase.from("invoices").update(invoiceUpdateData).eq("id", id);
+      if (invError) throw invError;
+      
+      const { error: delError } = await supabase.from("invoice_items").delete().eq("invoice_id", id);
+      if (delError) throw delError;
+      
+      // Strip existing IDs to prevent primary key conflicts on re-insertion
+      const newItems = items.map((item) => {
+        const { id: _id, created_at: _created, ...cleanItem } = item;
+        return { ...cleanItem, invoice_id: id };
+      });
+      
+      const { error: insError } = await supabase.from("invoice_items").insert(newItems);
+      if (insError) throw insError;
+      
+      alert("Invoice updated successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Error updating invoice: " + error.message);
+    }
   };
 
   if (!invoiceData) return <div className="page-card">Loading...</div>;

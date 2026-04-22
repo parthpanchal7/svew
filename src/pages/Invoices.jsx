@@ -66,7 +66,7 @@ export default function Invoices() {
                 <th>Firm</th>
                 <th>Party</th>
                 <th className="num">Total</th>
-                <th colSpan={3}>Action</th>
+                <th colSpan={4}>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -85,6 +85,11 @@ export default function Invoices() {
                   <td>
                     <Link className="nav-link" to={`/view-invoice/${inv.id}`}>
                       View
+                    </Link>
+                  </td>
+                  <td>
+                    <Link className="nav-link" target="_blank" to={`/view-invoice/${inv.id}?download=true`} style={{ color: "var(--brand-2)" }}>
+                      Download
                     </Link>
                   </td>
                   <td>
