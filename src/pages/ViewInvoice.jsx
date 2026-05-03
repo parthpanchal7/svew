@@ -36,12 +36,12 @@ export default function ViewInvoice() {
           const safePartyName = invoice.parties?.party_name
             ? invoice.parties.party_name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')
             : 'Party';
-            
+
           document.title = `${serialNo}_${safePartyName}`;
-          
+
           // Browser will pause execution while print dialog is open
           window.print();
-          
+
           // These run immediately after the user saves the PDF or cancels
           document.title = originalTitle;
           window.close(); // Close the temporary tab silently
@@ -74,17 +74,17 @@ export default function ViewInvoice() {
 
   const handlePrint = () => {
     const originalTitle = document.title;
-    
+
     // Create custom filename like: 01_PartyName
     const serialNo = invoice.invoice_number.split('/').pop() || invoice.invoice_number;
     const safePartyName = invoice.parties?.party_name
       ? invoice.parties.party_name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '')
       : 'Party';
-      
+
     document.title = `${serialNo}_${safePartyName}`;
-    
+
     window.print();
-    
+
     // Restore original title after print dialog closes
     setTimeout(() => {
       document.title = originalTitle;
@@ -226,7 +226,7 @@ export default function ViewInvoice() {
           </div>
         </footer>
 
-        <div className="invoice-dev-footer">
+        <div className="invoice-dev-footer no-print">
           <p>
             Invoice system developed by{" "}
             <a href="https://parthpanchal7.netlify.app" target="_blank">

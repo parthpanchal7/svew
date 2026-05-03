@@ -31,7 +31,12 @@ export default function EditInvoice() {
       // Strip existing IDs to prevent primary key conflicts on re-insertion
       const newItems = items.map((item) => {
         const { id: _id, created_at: _created, ...cleanItem } = item;
-        return { ...cleanItem, invoice_id: id };
+        return { 
+          ...cleanItem, 
+          invoice_id: id,
+          challan_date: cleanItem.challan_date || null,
+          challan_no: cleanItem.challan_no || null
+        };
       });
       
       const { error: insError } = await supabase.from("invoice_items").insert(newItems);

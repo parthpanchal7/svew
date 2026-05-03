@@ -108,6 +108,13 @@ export default function CreateInvoice() {
     ]);
   };
 
+  const removeRow = (indexToRemove) => {
+    if (items.length === 1) return; // Keep at least one row
+    const filtered = items.filter((_, index) => index !== indexToRemove);
+    const reIndexed = filtered.map((item, i) => ({ ...item, sr_no: i + 1 }));
+    setItems(reIndexed);
+  };
+
   const subtotal = items.reduce((sum, item) => sum + Number(item.amount), 0);
   const gstAmount = (subtotal * gstPercent) / 100;
   const cgst = gstAmount / 2;
@@ -151,8 +158,8 @@ export default function CreateInvoice() {
       const itemsToInsert = items.map((item) => ({
         invoice_id: invoiceId,
         sr_no: item.sr_no,
-        challan_no: item.challan_no,
-        challan_date: item.challan_date,
+        challan_no: item.challan_no || null,
+        challan_date: item.challan_date || null,
         description: item.description,
         qty: item.qty,
         rate: item.rate,
@@ -265,6 +272,7 @@ export default function CreateInvoice() {
               <th>Qty</th>
               <th>Rate</th>
               <th>Amount</th>
+              <th>Action</th>
             </tr>
           </thead>
 
@@ -288,6 +296,17 @@ export default function CreateInvoice() {
                   <input type="number" value={item.rate} onChange={(e) => handleItemChange(index, "rate", e.target.value)} />
                 </td>
                 <td>{item.amount}</td>
+                <td style={{ textAlign: "center" }}>
+                  <button 
+                    className="secondary" 
+                    onClick={() => removeRow(index)} 
+                    disabled={items.length === 1}
+                    style={{ padding: "0.4rem 0.6rem", fontSize: "0.8rem", background: items.length === 1 ? "#f1f3f5" : "#ffe3e3", color: items.length === 1 ? "#adb5bd" : "#fa5252", borderColor: "transparent" }}
+                    title="Remove item"
+                  >
+                    ✕
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

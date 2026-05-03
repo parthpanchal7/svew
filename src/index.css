@@ -686,8 +686,8 @@ th {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 12mm 12mm;
-    /* Balanced margins */
+    margin: 3mm 3mm;
+    /* Minimalist ultra-thin margins */
   }
 
   *,
@@ -740,20 +740,32 @@ th {
   }
 
   body {
-    font-size: 10pt;
+    font-size: 9pt;
     line-height: 1.3;
   }
 
   .invoice-header {
-    margin-bottom: 5mm !important;
+    margin-bottom: 2mm !important;
     padding-bottom: 2mm !important;
     display: flex !important;
-    justify-content: space-between !important;
-    border-bottom: 2pt solid #05668d !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border-bottom: 1pt solid #ccc !important;
+  }
+
+  .invoice-company-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .invoice-company-block>div {
+    justify-content: center !important;
   }
 
   .invoice-company {
-    font-size: 15pt;
+    font-size: 13pt;
     margin-bottom: 1mm !important;
   }
 
@@ -761,15 +773,16 @@ th {
     table-layout: fixed !important;
     width: 100% !important;
     border-collapse: collapse !important;
-    border: 1pt solid #dbe5fb !important;
-    margin: 4mm 0 !important;
+    border: 0.5pt solid #ccc !important;
+    margin: 3mm 0 !important;
   }
 
   .invoice-items-table th,
   .invoice-items-table td {
     font-size: 9pt;
-    padding: 3pt 4pt !important;
-    border: 0.5pt solid #dbe5fb !important;
+    padding: 2.5pt 3.5pt !important;
+    border: 0.5pt solid #eee !important;
+    border-bottom: 0.5pt solid #ccc !important;
   }
 
   /* Unified widths for regular invoice items */
@@ -839,25 +852,26 @@ th {
   .invoice-note-box,
   .invoice-totals-box,
   .invoice-meta-block {
-    border: 0.8pt solid #dbe5fb !important;
-    border-radius: 6px !important;
+    border: 0.5pt solid #ccc !important;
+    border-radius: 4px !important;
     padding: 2.5mm !important;
+    background: transparent !important;
   }
 
   .invoice-items-wrap {
-    margin-top: 2mm !important;
+    margin-top: 1mm !important;
     min-height: auto !important;
     /* Important: Don't force many pages */
     overflow: visible !important;
   }
 
   .invoice-bottom {
-    margin-top: 4mm !important;
+    margin-top: 2mm !important;
   }
 
   .invoice-footer {
-    margin-top: 8mm !important;
-    padding-top: 4mm !important;
+    margin-top: 4mm !important;
+    padding-top: 1mm !important;
     border-top: 1pt solid #eee !important;
     display: flex !important;
     justify-content: flex-end !important;
@@ -870,7 +884,7 @@ th {
   }
 
   .sign-line {
-    margin: 8mm 0 2mm auto !important;
+    margin: 4mm 0 2mm auto !important;
     width: 150px !important;
     border-top: 1pt solid #000 !important;
   }

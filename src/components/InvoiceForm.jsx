@@ -48,6 +48,13 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
 
   const addRow = () => setItems([...items, { sr_no: items.length + 1, challan_no: "", challan_date: "", description: "", qty: 0, rate: 0, amount: 0 }]);
 
+  const removeRow = (indexToRemove) => {
+    if (items.length === 1) return;
+    const filtered = items.filter((_, index) => index !== indexToRemove);
+    const reIndexed = filtered.map((item, i) => ({ ...item, sr_no: i + 1 }));
+    setItems(reIndexed);
+  };
+
   const subtotal = items.reduce((sum, item) => sum + Number(item.amount), 0);
   const gstAmount = (subtotal * gstPercent) / 100;
   const cgst = gstAmount / 2;
@@ -67,7 +74,46 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
         <div className="field"><label>Firm</label><select value={selectedFirm} onChange={(e) => setSelectedFirm(e.target.value)}><option value="">Select Firm</option>{firms.map((f) => <option key={f.id} value={f.id}>{f.firm_name}</option>)}</select></div>
         <div className="field"><label>Party</label><select value={selectedParty} onChange={(e) => setSelectedParty(e.target.value)}><option value="">Select Party</option>{parties.map((p) => <option key={p.id} value={p.id}>{p.party_name}</option>)}</select></div>
       </div>
-      <div className="table-wrap"><table><thead><tr><th>Sr</th><th>Challan</th><th>Date</th><th>Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead><tbody>{items.map((item, index) => <tr key={index}><td>{item.sr_no}</td><td><input value={item.challan_no} onChange={(e) => handleItemChange(index, "challan_no", e.target.value)} /></td><td><input type="date" value={item.challan_date} onChange={(e) => handleItemChange(index, "challan_date", e.target.value)} /></td><td><input value={item.description} onChange={(e) => handleItemChange(index, "description", e.target.value)} /></td><td><input type="number" value={item.qty} onChange={(e) => handleItemChange(index, "qty", e.target.value)} /></td><td><input type="number" value={item.rate} onChange={(e) => handleItemChange(index, "rate", e.target.value)} /></td><td>{item.amount}</td></tr>)}</tbody></table></div>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Sr</th>
+              <th>Challan</th>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Qty</th>
+              <th>Rate</th>
+              <th>Amount</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item, index) => (
+              <tr key={index}>
+                <td>{item.sr_no}</td>
+                <td><input value={item.challan_no} onChange={(e) => handleItemChange(index, "challan_no", e.target.value)} /></td>
+                <td><input type="date" value={item.challan_date} onChange={(e) => handleItemChange(index, "challan_date", e.target.value)} /></td>
+                <td><input value={item.description} onChange={(e) => handleItemChange(index, "description", e.target.value)} /></td>
+                <td><input type="number" value={item.qty} onChange={(e) => handleItemChange(index, "qty", e.target.value)} /></td>
+                <td><input type="number" value={item.rate} onChange={(e) => handleItemChange(index, "rate", e.target.value)} /></td>
+                <td>{item.amount}</td>
+                <td style={{ textAlign: "center" }}>
+                  <button 
+                    className="secondary" 
+                    onClick={() => removeRow(index)} 
+                    disabled={items.length === 1}
+                    style={{ padding: "0.4rem 0.6rem", fontSize: "0.8rem", background: items.length === 1 ? "#f1f3f5" : "#ffe3e3", color: items.length === 1 ? "#adb5bd" : "#fa5252", borderColor: "transparent" }}
+                    title="Remove item"
+                  >
+                    ✕
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <div style={{ marginTop: "0.8rem", display: "flex", gap: "0.6rem" }}><button className="secondary" onClick={addRow}>Add Row</button><button onClick={handleSubmit}>Save</button></div>
       <div className="summary-grid"><div className="summary-item">Subtotal: {subtotal.toFixed(2)}</div><div className="summary-item">CGST: {cgst.toFixed(2)}</div><div className="summary-item">SGST: {sgst.toFixed(2)}</div><div className="summary-item">Total Before Round: {totalBeforeRound.toFixed(2)}</div><div className="summary-item">Round Off: {roundOff.toFixed(2)}</div><div className="summary-item">Grand Total: {roundedTotal.toFixed(2)}</div></div>
     </section>
