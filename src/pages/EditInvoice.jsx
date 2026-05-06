@@ -25,8 +25,14 @@ export default function EditInvoice() {
       const { error: invError } = await supabase.from("invoices").update(invoiceUpdateData).eq("id", id);
       if (invError) throw invError;
       
-      const { error: delError } = await supabase.from("invoice_items").delete().eq("invoice_id", id);
+      const { error: delError, count: delCount } = await supabase.from("invoice_items").delete({ count: "exact" }).eq("invoice_id", id);
       if (delError) throw delError;
+      
+      // Safety check: If Supabase silently refuses to delete the old items due to missing RLS policies, 
+      // abort the update so we don't accidentally insert duplicates alongside the undeleted originals.
+      if (items.length > 0 && delCount === 0) {
+        throw new Error("Security policy blocked item deletion. Please add a DELETE policy for 'invoice_items' in your Supabase dashboard.");
+      }
       
       // Strip existing IDs to prevent primary key conflicts on re-insertion
       const newItems = items.map((item) => {

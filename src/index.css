@@ -683,6 +683,10 @@ th {
   }
 }
 
+.print-only-table-footer {
+  display: none;
+}
+
 @media print {
   @page {
     size: A4 portrait;
@@ -726,6 +730,10 @@ th {
   .no-print * {
     display: none !important;
     visibility: hidden !important;
+  }
+
+  .print-only-table-footer {
+    display: table-footer-group !important;
   }
 
   .invoice-document {

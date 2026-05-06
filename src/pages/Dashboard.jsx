@@ -3,7 +3,7 @@ import { supabase } from "../lib/supabase";
 import { Link } from "react-router-dom";
 
 export default function Dashboard({ role }) {
-  const [stats, setStats] = useState({ invoices: 0, parties: 0, firms: 0, totalSales: 0, outstanding: 0 });
+  const [stats, setStats] = useState({ invoices: 0, parties: 0, firms: 0, totalSales: 0, totalPayments: 0, outstanding: 0, collectionRate: 0 });
   const [firms, setFirms] = useState([]);
   const [selectedFirm, setSelectedFirm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,7 @@ export default function Dashboard({ role }) {
     const [invRes, partyRes, payRes, firmRes] = await Promise.all([
       invQuery,
       supabase.from("parties").select("*", { count: "exact", head: true }),
-      payRes = payQuery,
+      payQuery,
       supabase.from("firms").select("*", { count: "exact", head: true })
     ]);
 
@@ -47,7 +47,9 @@ export default function Dashboard({ role }) {
       parties: partyRes.count || 0,
       firms: firmRes.count || 0,
       totalSales,
-      outstanding: totalSales - totalPayments
+      totalPayments,
+      outstanding: totalSales - totalPayments,
+      collectionRate: totalSales > 0 ? Math.round((totalPayments / totalSales) * 100) : 0
     });
     setLoading(false);
   };
@@ -123,17 +125,17 @@ export default function Dashboard({ role }) {
           </div>
 
           <div style={{ marginTop: "2.5rem" }}>
-            <h3 style={{ marginBottom: "1rem", fontSize: "1.1rem" }}>FY 2026-27 Target Completion</h3>
+            <h3 style={{ marginBottom: "1rem", fontSize: "1.1rem" }}>FY 2026-27 Collection Health</h3>
             <div style={{ padding: "1.5rem", background: "#f8fafd", borderRadius: "12px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                <span style={{ fontSize: "0.9rem", fontWeight: "600" }}>Monthly Sales Target</span>
-                <span style={{ fontSize: "0.9rem", color: "var(--brand)" }}>72% Achieved</span>
+                <span style={{ fontSize: "0.9rem", fontWeight: "600" }}>Payment Recovery</span>
+                <span style={{ fontSize: "0.9rem", color: "var(--brand)", fontWeight: "600" }}>{stats.collectionRate}% Recovered</span>
               </div>
               <div style={{ height: "10px", background: "#e9ecef", borderRadius: "5px", overflow: "hidden" }}>
-                <div style={{ width: "72%", height: "100%", background: "linear-gradient(90deg, #05668d, #02c39a)", borderRadius: "5px" }}></div>
+                <div style={{ width: `${stats.collectionRate}%`, height: "100%", background: "linear-gradient(90deg, #05668d, #02c39a)", borderRadius: "5px", transition: "width 0.5s ease-out" }}></div>
               </div>
               <p className="muted" style={{ fontSize: "0.8rem", marginTop: "12px" }}>
-                * Projected growth is 12% higher than previous financial year (25-26).
+                * Displays the percentage of total sales (₹{fmt(stats.totalSales).replace('₹ ', '')}) that have been successfully collected.
               </p>
             </div>
           </div>

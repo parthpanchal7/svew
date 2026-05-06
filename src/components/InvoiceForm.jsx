@@ -12,7 +12,7 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [financialYear, setFinancialYear] = useState("");
   const [gstPercent, setGstPercent] = useState(18);
-  const [items, setItems] = useState([{ sr_no: 1, challan_no: "", challan_date: "", description: "", qty: 0, rate: 0, amount: 0 }]);
+  const [items, setItems] = useState([{ sr_no: 1, challan_no: "", challan_date: "", description: "", item_note: "", qty: 0, rate: 0, amount: 0 }]);
 
   async function fetchFirms() {
     const { data } = await supabase.from("firms").select("*");
@@ -46,7 +46,7 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
     setItems(updated);
   };
 
-  const addRow = () => setItems([...items, { sr_no: items.length + 1, challan_no: "", challan_date: "", description: "", qty: 0, rate: 0, amount: 0 }]);
+  const addRow = () => setItems([...items, { sr_no: items.length + 1, challan_no: "", challan_date: "", description: "", item_note: "", qty: 0, rate: 0, amount: 0 }]);
 
   const removeRow = (indexToRemove) => {
     if (items.length === 1) return;
@@ -94,7 +94,21 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
                 <td>{item.sr_no}</td>
                 <td><input value={item.challan_no} onChange={(e) => handleItemChange(index, "challan_no", e.target.value)} /></td>
                 <td><input type="date" value={item.challan_date} onChange={(e) => handleItemChange(index, "challan_date", e.target.value)} /></td>
-                <td><input value={item.description} onChange={(e) => handleItemChange(index, "description", e.target.value)} /></td>
+                <td>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <input 
+                      value={item.description} 
+                      onChange={(e) => handleItemChange(index, "description", e.target.value)} 
+                      placeholder="Item name"
+                    />
+                    <input 
+                      value={item.item_note || ""} 
+                      onChange={(e) => handleItemChange(index, "item_note", e.target.value)} 
+                      placeholder="Optional note / sub-description"
+                      style={{ fontSize: "0.85rem", color: "#555", backgroundColor: "#f9fbff", borderStyle: "dashed" }}
+                    />
+                  </div>
+                </td>
                 <td><input type="number" value={item.qty} onChange={(e) => handleItemChange(index, "qty", e.target.value)} /></td>
                 <td><input type="number" value={item.rate} onChange={(e) => handleItemChange(index, "rate", e.target.value)} /></td>
                 <td>{item.amount}</td>

@@ -20,6 +20,7 @@ export default function CreateInvoice() {
       challan_no: "",
       challan_date: "",
       description: "",
+      item_note: "",
       qty: 0,
       rate: 0,
       amount: 0,
@@ -101,6 +102,7 @@ export default function CreateInvoice() {
         challan_no: "",
         challan_date: "",
         description: "",
+        item_note: "",
         qty: 0,
         rate: 0,
         amount: 0,
@@ -161,6 +163,7 @@ export default function CreateInvoice() {
         challan_no: item.challan_no || null,
         challan_date: item.challan_date || null,
         description: item.description,
+        item_note: item.item_note || null,
         qty: item.qty,
         rate: item.rate,
         amount: item.amount,
@@ -183,6 +186,7 @@ export default function CreateInvoice() {
           challan_no: "",
           challan_date: "",
           description: "",
+          item_note: "",
           qty: 0,
           rate: 0,
           amount: 0,
@@ -287,7 +291,19 @@ export default function CreateInvoice() {
                   <input type="date" value={item.challan_date} onChange={(e) => handleItemChange(index, "challan_date", e.target.value)} />
                 </td>
                 <td>
-                  <input value={item.description} onChange={(e) => handleItemChange(index, "description", e.target.value)} />
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <input 
+                      value={item.description} 
+                      onChange={(e) => handleItemChange(index, "description", e.target.value)} 
+                      placeholder="Item name"
+                    />
+                    <input 
+                      value={item.item_note || ""} 
+                      onChange={(e) => handleItemChange(index, "item_note", e.target.value)} 
+                      placeholder="Optional note / sub-description"
+                      style={{ fontSize: "0.85rem", color: "#555", backgroundColor: "#f9fbff", borderStyle: "dashed" }}
+                    />
+                  </div>
                 </td>
                 <td>
                   <input type="number" value={item.qty} onChange={(e) => handleItemChange(index, "qty", e.target.value)} />

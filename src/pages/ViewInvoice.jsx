@@ -116,9 +116,9 @@ export default function ViewInvoice() {
           <article className="invoice-party-card">
             <p className="invoice-label">Billed To</p>
             <h3>{invoice.parties?.party_name}</h3>
-            <p className="invoice-text">{invoice.parties?.address}</p>
+            <p className="invoice-text">Address: {invoice.parties?.address}</p>
             <p className="invoice-text">GSTIN: {invoice.parties?.gst_number}</p>
-            <p className="invoice-text">State: {invoice.parties?.state}</p>
+            {/* <p className="invoice-text">State: {invoice.parties?.state}</p> */}
           </article>
 
           <div className="invoice-meta-block">
@@ -157,13 +157,27 @@ export default function ViewInvoice() {
                   <td>{item.sr_no || index + 1}</td>
                   <td>{item.challan_no}</td>
                   <td>{fmtDate(item.challan_date)}</td>
-                  <td>{item.description}</td>
+                  <td>
+                    <div>{item.description}</div>
+                    {item.item_note && (
+                      <div className="item-note" style={{ fontSize: "0.85em", color: "#555", marginTop: "2px" }}>
+                        {item.item_note}
+                      </div>
+                    )}
+                  </td>
                   <td className="num">{item.qty}</td>
                   <td className="num">{fmtCurrency(item.rate)}</td>
                   <td className="num">{fmtCurrency(item.amount)}</td>
                 </tr>
               ))}
             </tbody>
+            <tfoot className="print-only-table-footer">
+              <tr>
+                <td colSpan="7" style={{ textAlign: "right", border: "none", fontStyle: "italic", fontSize: "0.8rem", color: "#666", padding: "6px" }}>
+                  Continued on next page...
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
