@@ -698,6 +698,7 @@ th {
   *::before,
   *::after {
     box-sizing: border-box !important;
+    color: #000 !important;
   }
 
   html,
@@ -758,7 +759,7 @@ th {
     display: flex !important;
     justify-content: center !important;
     text-align: center !important;
-    border-bottom: 1pt solid #ccc !important;
+    border-bottom: 1pt solid #000 !important;
   }
 
   .invoice-company-block {
@@ -781,7 +782,7 @@ th {
     table-layout: fixed !important;
     width: 100% !important;
     border-collapse: collapse !important;
-    border: 0.5pt solid #ccc !important;
+    border: 0.5pt solid #000 !important;
     margin: 3mm 0 !important;
   }
 
@@ -789,8 +790,8 @@ th {
   .invoice-items-table td {
     font-size: 9pt;
     padding: 2.5pt 3.5pt !important;
-    border: 0.5pt solid #eee !important;
-    border-bottom: 0.5pt solid #ccc !important;
+    border: 0.5pt solid #000 !important;
+    border-bottom: 0.5pt solid #000 !important;
   }
 
   /* Unified widths for regular invoice items */
@@ -860,7 +861,7 @@ th {
   .invoice-note-box,
   .invoice-totals-box,
   .invoice-meta-block {
-    border: 0.5pt solid #ccc !important;
+    border: 0.5pt solid #000 !important;
     border-radius: 4px !important;
     padding: 2.5mm !important;
     background: transparent !important;
