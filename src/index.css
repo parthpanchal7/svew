@@ -789,8 +789,14 @@ th {
   .invoice-items-table th,
   .invoice-items-table td {
     font-size: 9pt;
-    padding: 2.5pt 3.5pt !important;
-    border: 0.5pt solid #000 !important;
+    padding: 3.5pt 4pt !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-left: 0.5pt solid #000 !important;
+    border-right: 0.5pt solid #000 !important;
+  }
+
+  .invoice-items-table th {
     border-bottom: 0.5pt solid #000 !important;
   }
 

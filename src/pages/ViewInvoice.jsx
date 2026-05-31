@@ -130,10 +130,6 @@ export default function ViewInvoice() {
               <span>Date</span>
               <strong>{fmtDate(invoice.invoice_date)}</strong>
             </div>
-            <div>
-              <span>Financial Year</span>
-              <strong>20{invoice.financial_year.slice(0, 2)}-{invoice.financial_year.slice(2, 4)}</strong>
-            </div>
           </div>
         </section>
 
@@ -171,13 +167,6 @@ export default function ViewInvoice() {
                 </tr>
               ))}
             </tbody>
-            <tfoot className="print-only-table-footer">
-              <tr>
-                <td colSpan="7" style={{ textAlign: "right", border: "none", fontStyle: "italic", fontSize: "0.8rem", color: "#666", padding: "6px" }}>
-                  Continued on next page...
-                </td>
-              </tr>
-            </tfoot>
           </table>
         </div>
       </div>
