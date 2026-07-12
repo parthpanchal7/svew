@@ -13,6 +13,7 @@ export default function CreateInvoice() {
 
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [financialYear, setFinancialYear] = useState("");
+  const [referenceNote, setReferenceNote] = useState("");
 
   const [items, setItems] = useState([
     {
@@ -148,6 +149,7 @@ export default function CreateInvoice() {
             total_before_round: totalBeforeRound,
             round_off: roundOff,
             grand_total: roundedTotal,
+            reference_note: referenceNote || null,
           },
         ])
         .select()
@@ -180,6 +182,7 @@ export default function CreateInvoice() {
       setInvoiceDate(new Date().toISOString().split("T")[0]);
       setInvoiceNumber("");
       setFinancialYear("");
+      setReferenceNote("");
       setItems([
         {
           sr_no: 1,
@@ -233,6 +236,15 @@ export default function CreateInvoice() {
                 style={{ fontWeight: "bold", color: "var(--brand)" }}
               />
             </div>
+          </div>
+
+          <div className="field" style={{ gridColumn: "span 2" }}>
+            <label>Reference Note (Optional)</label>
+            <input 
+              value={referenceNote} 
+              onChange={(e) => setReferenceNote(e.target.value)} 
+              placeholder="e.g. Proforma Invoice No. or other references"
+            />
           </div>
         </div>
       </div>

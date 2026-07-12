@@ -12,6 +12,7 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
   const [invoiceNumber, setInvoiceNumber] = useState("");
   const [financialYear, setFinancialYear] = useState("");
   const [gstPercent, setGstPercent] = useState(18);
+  const [referenceNote, setReferenceNote] = useState("");
   const [items, setItems] = useState([{ sr_no: 1, challan_no: "", challan_date: "", description: "", item_note: "", qty: 0, rate: 0, amount: 0 }]);
 
   async function fetchFirms() {
@@ -35,6 +36,7 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
       setInvoiceNumber(initialData.invoice_number);
       setFinancialYear(initialData.financial_year);
       setGstPercent(initialData.gst_percent || 18);
+      setReferenceNote(initialData.reference_note || "");
       setItems(initialData.items || []);
     }
   }, [initialData]);
@@ -63,7 +65,7 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
   const roundedTotal = Math.round(totalBeforeRound);
   const roundOff = roundedTotal - totalBeforeRound;
 
-  const handleSubmit = () => onSubmit({ invoice_number: invoiceNumber, financial_year: financialYear || getFinancialYear(invoiceDate), firm_id: selectedFirm, party_id: selectedParty, invoice_date: invoiceDate, gst_percent: gstPercent, subtotal, cgst, sgst, total_before_round: totalBeforeRound, round_off: roundOff, grand_total: roundedTotal, items });
+  const handleSubmit = () => onSubmit({ invoice_number: invoiceNumber, financial_year: financialYear || getFinancialYear(invoiceDate), firm_id: selectedFirm, party_id: selectedParty, invoice_date: invoiceDate, gst_percent: gstPercent, subtotal, cgst, sgst, total_before_round: totalBeforeRound, round_off: roundOff, grand_total: roundedTotal, reference_note: referenceNote || null, items });
 
   return (
     <section className="page-card">
@@ -73,6 +75,7 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
         <div className="field"><label>Invoice Number</label><input value={invoiceNumber} onChange={(e) => setInvoiceNumber(e.target.value)} /></div>
         <div className="field"><label>Firm</label><select value={selectedFirm} onChange={(e) => setSelectedFirm(e.target.value)}><option value="">Select Firm</option>{firms.map((f) => <option key={f.id} value={f.id}>{f.firm_name}</option>)}</select></div>
         <div className="field"><label>Party</label><select value={selectedParty} onChange={(e) => setSelectedParty(e.target.value)}><option value="">Select Party</option>{parties.map((p) => <option key={p.id} value={p.id}>{p.party_name}</option>)}</select></div>
+        <div className="field" style={{ gridColumn: "span 2" }}><label>Reference Note (Optional)</label><input value={referenceNote} onChange={(e) => setReferenceNote(e.target.value)} placeholder="e.g. Proforma Invoice No. or other references" /></div>
       </div>
       <div className="table-wrap">
         <table>

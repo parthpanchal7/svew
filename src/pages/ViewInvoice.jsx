@@ -130,6 +130,12 @@ export default function ViewInvoice() {
               <span>Date</span>
               <strong>{fmtDate(invoice.invoice_date)}</strong>
             </div>
+            {invoice.reference_note && (
+              <div>
+                <span>Ref. / Note</span>
+                <strong>{invoice.reference_note}</strong>
+              </div>
+            )}
           </div>
         </section>
 
