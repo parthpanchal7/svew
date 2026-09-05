@@ -7,6 +7,7 @@ import { getFinancialYear } from "../utils/invoiceNumber";
 
 export default function Invoices() {
   const [invoices, setInvoices] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [financialYear, setFinancialYear] = useState(() => getFinancialYear(new Date().toISOString().split("T")[0]));
 
   const fetchInvoices = async () => {
@@ -41,11 +42,31 @@ export default function Invoices() {
 
   const fmt = (val) => Number(val).toLocaleString("en-IN", { minimumFractionDigits: 2 });
 
+  const filteredInvoices = invoices.filter((inv) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
+    const invNo = inv.invoice_number?.toLowerCase() || "";
+    const firm = inv.firms?.firm_name?.toLowerCase() || "";
+    const party = inv.parties?.party_name?.toLowerCase() || "";
+    const refNote = inv.reference_note?.toLowerCase() || "";
+    return invNo.includes(q) || firm.includes(q) || party.includes(q) || refNote.includes(q);
+  });
+
   return (
     <section className="page-card">
       <div className="no-print">
         <h2 className="page-title">Invoices</h2>
         <div className="grid-2">
+          <div className="field">
+            <label>Search Invoices</label>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by Party, Invoice No, Firm, or Ref Note..."
+            />
+          </div>
+
           <div className="field">
             <label>Filter by Financial Year</label>
             <select value={financialYear} onChange={(e) => setFinancialYear(e.target.value)}>
@@ -72,7 +93,14 @@ export default function Invoices() {
               </tr>
             </thead>
             <tbody>
-              {invoices.map((inv) => {
+              {filteredInvoices.length === 0 ? (
+                <tr>
+                  <td colSpan={10} style={{ textAlign: "center", color: "#888", padding: "1.5rem" }}>
+                    No invoices found matching "{searchQuery}".
+                  </td>
+                </tr>
+              ) : (
+                filteredInvoices.map((inv) => {
                 let rawPhone = inv.parties?.contact_number || "";
                 let cleanPhone = rawPhone.replace(/\D/g, "");
                 if (cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
@@ -116,7 +144,7 @@ export default function Invoices() {
                     </td>
                   </tr>
                 );
-              })}
+              }))}
             </tbody>
           </table>
         </div>
