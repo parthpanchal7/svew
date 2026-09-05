@@ -122,15 +122,52 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
     setItems(reIndexed);
   };
 
-  const subtotal = items.reduce((sum, item) => sum + Number(item.amount), 0);
-  const gstAmount = (subtotal * gstPercent) / 100;
-  const cgst = gstAmount / 2;
-  const sgst = gstAmount / 2;
-  const totalBeforeRound = subtotal + gstAmount;
+  const subtotal = Number(items.reduce((sum, item) => sum + Number(item.amount || 0), 0).toFixed(2));
+  const gstAmount = Number(((subtotal * (Number(gstPercent) || 0)) / 100).toFixed(2));
+  const cgst = Number((gstAmount / 2).toFixed(2));
+  const sgst = Number((gstAmount / 2).toFixed(2));
+  const totalBeforeRound = Number((subtotal + gstAmount).toFixed(2));
   const roundedTotal = Math.round(totalBeforeRound);
-  const roundOff = roundedTotal - totalBeforeRound;
+  const roundOff = Number((roundedTotal - totalBeforeRound).toFixed(2));
 
-  const handleSubmit = () => onSubmit({ invoice_number: invoiceNumber, financial_year: financialYear || getFinancialYear(invoiceDate), firm_id: selectedFirm, party_id: selectedParty, invoice_date: invoiceDate, gst_percent: gstPercent, subtotal, cgst, sgst, total_before_round: totalBeforeRound, round_off: roundOff, grand_total: roundedTotal, reference_note: referenceNote || null, items });
+  const handleSubmit = () => {
+    if (!selectedFirm || !selectedParty || !invoiceDate || !invoiceNumber) {
+      alert("Please fill in all required general & billing details (Firm, Party, Date, Invoice Number).");
+      return;
+    }
+
+    const validItems = items.filter((item) => item.description && item.description.trim() !== "");
+    if (validItems.length === 0) {
+      alert("Please add at least one item with a valid product description.");
+      return;
+    }
+
+    const cleanedItems = validItems.map((item, index) => ({
+      ...item,
+      sr_no: index + 1,
+      description: item.description.trim(),
+      qty: Number(item.qty) || 0,
+      rate: Number(item.rate) || 0,
+      amount: Number((Number(item.qty || 0) * Number(item.rate || 0)).toFixed(2)),
+    }));
+
+    onSubmit({
+      invoice_number: invoiceNumber,
+      financial_year: financialYear || getFinancialYear(invoiceDate),
+      firm_id: selectedFirm,
+      party_id: selectedParty,
+      invoice_date: invoiceDate,
+      gst_percent: gstPercent,
+      subtotal,
+      cgst,
+      sgst,
+      total_before_round: totalBeforeRound,
+      round_off: roundOff,
+      grand_total: roundedTotal,
+      reference_note: referenceNote || null,
+      items: cleanedItems,
+    });
+  };
 
   return (
     <section className="page-card">

@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
+import { getFinancialYear } from "../utils/invoiceNumber";
+
 export default function Invoices() {
   const [invoices, setInvoices] = useState([]);
-  const [financialYear, setFinancialYear] = useState("2627");
+  const [financialYear, setFinancialYear] = useState(() => getFinancialYear(new Date().toISOString().split("T")[0]));
 
   const fetchInvoices = async () => {
     let query = supabase

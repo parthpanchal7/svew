@@ -134,12 +134,12 @@ export default function ViewInvoice() {
       <header className="invoice-header" style={{ alignItems: "center", borderBottom: "2pt solid var(--brand)" }}>
         <div className="invoice-company-block">
           <p className="invoice-eyebrow">Tax Invoice</p>
-          <h2 className="invoice-company" style={{ color: "var(--brand)", fontSize: "1.6rem" }}>{invoice.firms?.firm_name}</h2>
-          <p className="invoice-text"><strong>GSTIN:</strong> {invoice.firms?.gst_number}</p>
-          <p className="invoice-text" style={{ fontSize: "0.8rem" }}>{invoice.firms?.address}</p>
+          <h2 className="invoice-company" style={{ color: "var(--brand)", fontSize: "1.6rem" }}>{invoice.firms?.firm_name || "Firm Details Unavailable"}</h2>
+          {invoice.firms?.gst_number && <p className="invoice-text"><strong>GSTIN:</strong> {invoice.firms.gst_number}</p>}
+          {invoice.firms?.address && <p className="invoice-text" style={{ fontSize: "0.8rem" }}>{invoice.firms.address}</p>}
           <div style={{ marginTop: "2mm", display: "flex", gap: "10mm" }}>
-            {invoice.firms?.contact_number && <p className="invoice-text"><strong>Ph:</strong> {invoice.firms?.contact_number}</p>}
-            {invoice.firms?.email && <p className="invoice-text"><strong>Email:</strong> {invoice.firms?.email}</p>}
+            {invoice.firms?.contact_number && <p className="invoice-text"><strong>Ph:</strong> {invoice.firms.contact_number}</p>}
+            {invoice.firms?.email && <p className="invoice-text"><strong>Email:</strong> {invoice.firms.email}</p>}
           </div>
         </div>
         <div className="no-print" style={{ marginLeft: "auto", paddingLeft: "1rem" }}>
@@ -152,9 +152,9 @@ export default function ViewInvoice() {
         <section className="invoice-party-grid">
           <article className="invoice-party-card">
             <p className="invoice-label">Billed To</p>
-            <h3>{invoice.parties?.party_name}</h3>
-            <p className="invoice-text">Address: {invoice.parties?.address}</p>
-            <p className="invoice-text">GSTIN: {invoice.parties?.gst_number}</p>
+            <h3>{invoice.parties?.party_name || "Party Details Unavailable"}</h3>
+            <p className="invoice-text">Address: {invoice.parties?.address || "-"}</p>
+            <p className="invoice-text">GSTIN: {invoice.parties?.gst_number || "-"}</p>
           </article>
 
           <div className="invoice-meta-block">
