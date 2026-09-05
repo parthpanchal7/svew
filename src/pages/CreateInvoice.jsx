@@ -159,21 +159,24 @@ export default function CreateInvoice() {
 
       const invoiceId = invoiceData.id;
 
-      const itemsToInsert = items.map((item) => ({
+      const itemsToInsert = items.map((item, index) => ({
         invoice_id: invoiceId,
-        sr_no: item.sr_no,
+        sr_no: item.sr_no || index + 1,
         challan_no: item.challan_no || null,
         challan_date: item.challan_date || null,
-        description: item.description,
+        description: item.description || "",
         item_note: item.item_note || null,
-        qty: item.qty,
-        rate: item.rate,
-        amount: item.amount,
+        qty: Number(item.qty) || 0,
+        rate: Number(item.rate) || 0,
+        amount: Number(item.amount) || 0,
       }));
 
       const { error: itemError } = await supabase.from("invoice_items").insert(itemsToInsert);
 
-      if (itemError) throw itemError;
+      if (itemError) {
+        console.error("Error inserting invoice items:", itemError);
+        throw new Error("Invoice main details saved, but item insertion failed: " + itemError.message);
+      }
 
       alert(`Invoice ${invoiceNumber} saved successfully`);
 

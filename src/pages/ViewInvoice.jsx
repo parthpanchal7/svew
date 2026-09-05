@@ -12,12 +12,26 @@ export default function ViewInvoice() {
   const [items, setItems] = useState([]);
 
   async function fetchInvoice() {
-    const { data } = await supabase
+    const { data, error: invError } = await supabase
       .from("invoices")
       .select(`*, firms (*), parties (*)`)
       .eq("id", id)
       .single();
-    const { data: itemData } = await supabase.from("invoice_items").select("*").eq("invoice_id", id);
+    
+    if (invError) {
+      console.error("Error fetching invoice:", invError);
+    }
+
+    const { data: itemData, error: itemError } = await supabase
+      .from("invoice_items")
+      .select("*")
+      .eq("invoice_id", id)
+      .order("sr_no", { ascending: true });
+
+    if (itemError) {
+      console.error("Error fetching invoice items:", itemError);
+    }
+
     setInvoice(data);
     setItems(itemData || []);
   }
