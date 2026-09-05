@@ -14,6 +14,7 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
   const [gstPercent, setGstPercent] = useState(18);
   const [referenceNote, setReferenceNote] = useState("");
   const [items, setItems] = useState([{ sr_no: 1, challan_no: "", challan_date: "", description: "", item_note: "", qty: 0, rate: 0, amount: 0 }]);
+  const [productsList, setProductsList] = useState([]);
 
   async function fetchFirms() {
     const { data } = await supabase.from("firms").select("*");
@@ -25,9 +26,55 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
     setParties(data || []);
   }
 
+  async function fetchProducts() {
+    const productMap = new Map();
+
+    // 1. Load from products master table
+    const { data: masterData } = await supabase
+      .from("products")
+      .select("description, rate, item_note")
+      .order("description", { ascending: true });
+
+    if (masterData) {
+      masterData.forEach((item) => {
+        const name = item.description?.trim();
+        if (name) {
+          productMap.set(name.toLowerCase(), {
+            description: name,
+            rate: item.rate || 0,
+            item_note: item.item_note || "",
+          });
+        }
+      });
+    }
+
+    // 2. Load from invoice_items history
+    const { data: historyData } = await supabase
+      .from("invoice_items")
+      .select("id, description, rate, item_note")
+      .not("description", "is", null)
+      .order("id", { ascending: true });
+
+    if (historyData) {
+      historyData.forEach((item) => {
+        const name = item.description?.trim();
+        if (name && !productMap.has(name.toLowerCase())) {
+          productMap.set(name.toLowerCase(), {
+            description: name,
+            rate: item.rate || 0,
+            item_note: item.item_note || "",
+          });
+        }
+      });
+    }
+
+    setProductsList(Array.from(productMap.values()));
+  }
+
   useEffect(() => {
     fetchFirms();
     fetchParties();
+    fetchProducts();
 
     if (initialData) {
       setSelectedFirm(initialData.firm_id);
@@ -44,7 +91,25 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
   const handleItemChange = (index, field, value) => {
     const updated = [...items];
     updated[index][field] = value;
-    if (field === "qty" || field === "rate") updated[index].amount = Number(updated[index].qty) * Number(updated[index].rate);
+
+    if (field === "description") {
+      const match = productsList.find(
+        (p) => p.description.toLowerCase() === value.trim().toLowerCase()
+      );
+      if (match) {
+        if (match.rate) {
+          updated[index].rate = match.rate;
+        }
+        if (match.item_note && !updated[index].item_note) {
+          updated[index].item_note = match.item_note;
+        }
+      }
+    }
+
+    if (field === "qty" || field === "rate" || field === "description") {
+      updated[index].amount = Number(updated[index].qty || 0) * Number(updated[index].rate || 0);
+    }
+
     setItems(updated);
   };
 
@@ -103,6 +168,7 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
                       value={item.description} 
                       onChange={(e) => handleItemChange(index, "description", e.target.value)} 
                       placeholder="Item name"
+                      list="edit-products-autocomplete-list"
                     />
                     <input 
                       value={item.item_note || ""} 
@@ -131,6 +197,13 @@ export default function InvoiceForm({ initialData = null, onSubmit }) {
           </tbody>
         </table>
       </div>
+      <datalist id="edit-products-autocomplete-list">
+        {productsList.map((p, idx) => (
+          <option key={idx} value={p.description}>
+            {p.rate ? `₹${p.rate}` : ""}
+          </option>
+        ))}
+      </datalist>
       <div style={{ marginTop: "0.8rem", display: "flex", gap: "0.6rem" }}><button className="secondary" onClick={addRow}>Add Row</button><button onClick={handleSubmit}>Save</button></div>
       <div className="summary-grid"><div className="summary-item">Subtotal: {subtotal.toFixed(2)}</div><div className="summary-item">CGST: {cgst.toFixed(2)}</div><div className="summary-item">SGST: {sgst.toFixed(2)}</div><div className="summary-item">Total Before Round: {totalBeforeRound.toFixed(2)}</div><div className="summary-item">Round Off: {roundOff.toFixed(2)}</div><div className="summary-item">Grand Total: {roundedTotal.toFixed(2)}</div></div>
     </section>

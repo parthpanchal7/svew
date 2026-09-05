@@ -105,6 +105,29 @@ export default function ViewInvoice() {
     }, 1000);
   };
 
+  const handleWhatsAppShare = () => {
+    let rawPhone = invoice.parties?.contact_number || "";
+    let cleanPhone = rawPhone.replace(/\D/g, "");
+    if (cleanPhone.length === 10) {
+      cleanPhone = "91" + cleanPhone;
+    }
+
+    const firmName = invoice.firms?.firm_name || "SVEW";
+    const partyName = invoice.parties?.party_name || "Customer";
+    const invNo = invoice.invoice_number;
+    const invDate = fmtDate(invoice.invoice_date);
+    const amountStr = fmtCurrency(invoice.grand_total);
+    const currentUrl = window.location.origin + `/view-invoice/${id}?download=true`;
+
+    const text = `Hello *${partyName}*,\n\nHere is your Tax Invoice from *${firmName}*:\n\n📄 *Invoice No:* ${invNo}\n📅 *Date:* ${invDate}\n💰 *Amount Due:* ${amountStr}\n\nClick the link below to view/download your PDF invoice:\n${currentUrl}\n\nThank you for doing business with us!`;
+
+    const whatsappUrl = cleanPhone 
+      ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(text)}`
+      : `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+
+    window.open(whatsappUrl, "_blank");
+  };
+
   return (
     <section className="page-card invoice-document">
       {/* ================= HEADER ================= */}
@@ -132,7 +155,6 @@ export default function ViewInvoice() {
             <h3>{invoice.parties?.party_name}</h3>
             <p className="invoice-text">Address: {invoice.parties?.address}</p>
             <p className="invoice-text">GSTIN: {invoice.parties?.gst_number}</p>
-            {/* <p className="invoice-text">State: {invoice.parties?.state}</p> */}
           </article>
 
           <div className="invoice-meta-block">
@@ -259,9 +281,16 @@ export default function ViewInvoice() {
         </div>
       </div>
 
-      <div style={{ marginTop: "1rem", display: "flex", gap: "1rem" }} className="no-print">
+      <div style={{ marginTop: "1rem", display: "flex", gap: "1rem", flexWrap: "wrap" }} className="no-print">
         <button id="print-btn" className="primary" onClick={handlePrint}>
           Print / Download PDF
+        </button>
+        <button
+          className="secondary"
+          onClick={handleWhatsAppShare}
+          style={{ background: "#25D366", color: "#fff", borderColor: "#25D366", fontWeight: "600", display: "flex", alignItems: "center", gap: "6px" }}
+        >
+          <span>💬</span> Share via WhatsApp
         </button>
         <button className="secondary" onClick={() => window.history.back()}>
           Back to List

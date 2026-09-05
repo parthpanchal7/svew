@@ -28,9 +28,12 @@ export default function CreateInvoice() {
     },
   ]);
 
+  const [productsList, setProductsList] = useState([]);
+
   useEffect(() => {
     fetchFirms();
     fetchParties();
+    fetchProducts();
   }, []);
 
   useEffect(() => {
@@ -48,6 +51,51 @@ export default function CreateInvoice() {
     const { data } = await supabase.from("parties").select("*");
     setParties(data || []);
   };
+
+  async function fetchProducts() {
+    const productMap = new Map();
+
+    // 1. Load from products master table
+    const { data: masterData } = await supabase
+      .from("products")
+      .select("description, rate, item_note")
+      .order("description", { ascending: true });
+
+    if (masterData) {
+      masterData.forEach((item) => {
+        const name = item.description?.trim();
+        if (name) {
+          productMap.set(name.toLowerCase(), {
+            description: name,
+            rate: item.rate || 0,
+            item_note: item.item_note || "",
+          });
+        }
+      });
+    }
+
+    // 2. Load from invoice_items history
+    const { data: historyData } = await supabase
+      .from("invoice_items")
+      .select("id, description, rate, item_note")
+      .not("description", "is", null)
+      .order("id", { ascending: true });
+
+    if (historyData) {
+      historyData.forEach((item) => {
+        const name = item.description?.trim();
+        if (name && !productMap.has(name.toLowerCase())) {
+          productMap.set(name.toLowerCase(), {
+            description: name,
+            rate: item.rate || 0,
+            item_note: item.item_note || "",
+          });
+        }
+      });
+    }
+
+    setProductsList(Array.from(productMap.values()));
+  }
 
   async function autoGenerateInvoiceNumber() {
     if (!selectedFirm || !invoiceDate) return;
@@ -72,7 +120,6 @@ export default function CreateInvoice() {
     if (data && data.length > 0) {
       const lastInvoice = data[0].invoice_number;
       const parts = lastInvoice.split("/");
-      // Handle potential formats like FY/01 or just 01
       const lastPart = parts[parts.length - 1];
       const lastNumber = parseInt(lastPart) || 0;
       nextNumber = lastNumber + 1;
@@ -88,8 +135,22 @@ export default function CreateInvoice() {
     const updated = [...items];
     updated[index][field] = value;
 
-    if (field === "qty" || field === "rate") {
-      updated[index].amount = Number(updated[index].qty) * Number(updated[index].rate);
+    if (field === "description") {
+      const match = productsList.find(
+        (p) => p.description.toLowerCase() === value.trim().toLowerCase()
+      );
+      if (match) {
+        if (match.rate) {
+          updated[index].rate = match.rate;
+        }
+        if (match.item_note && !updated[index].item_note) {
+          updated[index].item_note = match.item_note;
+        }
+      }
+    }
+
+    if (field === "qty" || field === "rate" || field === "description") {
+      updated[index].amount = Number(updated[index].qty || 0) * Number(updated[index].rate || 0);
     }
 
     setItems(updated);
@@ -186,6 +247,7 @@ export default function CreateInvoice() {
       setInvoiceNumber("");
       setFinancialYear("");
       setReferenceNote("");
+      fetchProducts();
       setItems([
         {
           sr_no: 1,
@@ -311,6 +373,7 @@ export default function CreateInvoice() {
                       value={item.description} 
                       onChange={(e) => handleItemChange(index, "description", e.target.value)} 
                       placeholder="Item name"
+                      list="products-autocomplete-list"
                     />
                     <input 
                       value={item.item_note || ""} 
@@ -343,6 +406,14 @@ export default function CreateInvoice() {
           </tbody>
         </table>
       </div>
+
+      <datalist id="products-autocomplete-list">
+        {productsList.map((p, idx) => (
+          <option key={idx} value={p.description}>
+            {p.rate ? `₹${p.rate}` : ""}
+          </option>
+        ))}
+      </datalist>
 
       <div style={{ marginTop: "0.8rem", display: "flex", gap: "0.6rem" }}>
         <button className="secondary" onClick={addRow}>

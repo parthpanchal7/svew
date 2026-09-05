@@ -29,6 +29,7 @@ export default function Navbar({ role }) {
           <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/dashboard">Dashboard</NavLink>
           <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/invoices">Invoices</NavLink>
           <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/create-invoice">Create</NavLink>
+          <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/products">Products</NavLink>
           <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/ledger">Ledger</NavLink>
           <NavLink className={({ isActive }) => `desktop-link ${isActive ? "active" : ""}`} to="/payments">Payments</NavLink>
           {role === "super_admin" && (

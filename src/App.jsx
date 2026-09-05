@@ -13,6 +13,7 @@ import Parties from "./pages/Parties";
 import ViewInvoice from "./pages/ViewInvoice";
 import Payments from "./pages/Payments";
 import Ledger from "./pages/Ledger";
+import Products from "./pages/Products";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -116,6 +117,7 @@ function App() {
           <Route path="/view-invoice/:id" element={<ViewInvoice />} />
           <Route path="/payments" element={<Payments role={role} />} />
           <Route path="/ledger" element={<Ledger />} />
+          <Route path="/products" element={<Products role={role} />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </main>

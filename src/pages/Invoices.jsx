@@ -66,39 +66,55 @@ export default function Invoices() {
                 <th>Firm</th>
                 <th>Party</th>
                 <th className="num">Total</th>
-                <th colSpan={4}>Action</th>
+                <th colSpan={5}>Action</th>
               </tr>
             </thead>
             <tbody>
-              {invoices.map((inv) => (
-                <tr key={inv.id}>
-                  <td>{inv.invoice_number}</td>
-                  <td>{inv.invoice_date}</td>
-                  <td>{inv.firms?.firm_name}</td>
-                  <td>{inv.parties?.party_name}</td>
-                  <td className="num">₹ {fmt(inv.grand_total)}</td>
-                  <td>
-                    <Link className="nav-link" to={`/edit-invoice/${inv.id}`}>
-                      Edit
-                    </Link>
-                  </td>
-                  <td>
-                    <Link className="nav-link" to={`/view-invoice/${inv.id}`}>
-                      View
-                    </Link>
-                  </td>
-                  <td>
-                    <Link className="nav-link" target="_blank" to={`/view-invoice/${inv.id}?download=true`} style={{ color: "var(--brand-2)" }}>
-                      Download
-                    </Link>
-                  </td>
-                  <td>
-                    <button className="secondary" onClick={() => handleDelete(inv.id)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {invoices.map((inv) => {
+                let rawPhone = inv.parties?.contact_number || "";
+                let cleanPhone = rawPhone.replace(/\D/g, "");
+                if (cleanPhone.length === 10) cleanPhone = "91" + cleanPhone;
+
+                const shareText = `Hello *${inv.parties?.party_name || "Customer"}*,\n\nHere is your Tax Invoice from *${inv.firms?.firm_name || "SVEW"}*:\n\n📄 *Invoice No:* ${inv.invoice_number}\n📅 *Date:* ${inv.invoice_date}\n💰 *Amount Due:* ₹ ${fmt(inv.grand_total)}\n\nView/Download Invoice:\n${window.location.origin}/view-invoice/${inv.id}?download=true\n\nThank you!`;
+                const waUrl = cleanPhone 
+                  ? `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(shareText)}`
+                  : `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+
+                return (
+                  <tr key={inv.id}>
+                    <td>{inv.invoice_number}</td>
+                    <td>{inv.invoice_date}</td>
+                    <td>{inv.firms?.firm_name}</td>
+                    <td>{inv.parties?.party_name}</td>
+                    <td className="num">₹ {fmt(inv.grand_total)}</td>
+                    <td>
+                      <Link className="nav-link" to={`/edit-invoice/${inv.id}`}>
+                        Edit
+                      </Link>
+                    </td>
+                    <td>
+                      <Link className="nav-link" to={`/view-invoice/${inv.id}`}>
+                        View
+                      </Link>
+                    </td>
+                    <td>
+                      <a href={waUrl} target="_blank" rel="noreferrer" className="nav-link" style={{ color: "#25D366", fontWeight: "bold" }}>
+                        WhatsApp
+                      </a>
+                    </td>
+                    <td>
+                      <Link className="nav-link" target="_blank" to={`/view-invoice/${inv.id}?download=true`} style={{ color: "var(--brand-2)" }}>
+                        Download
+                      </Link>
+                    </td>
+                    <td>
+                      <button className="secondary" onClick={() => handleDelete(inv.id)}>
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
